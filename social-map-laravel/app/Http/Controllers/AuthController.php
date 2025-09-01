@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserLoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -15,19 +17,41 @@ class AuthController extends Controller
         $data['role'] = User::ROLE_PARTICIPANT;
         $user = User::create($data);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
+        $request->session()->regenerate();
 
         return response()->json([
             'user' => $user,
-            'token' => $token,
         ], 201);
     }
 
-    public function login() {
-        return 'login';
+    public function login(UserLoginRequest $request) : JsonResponse
+    {
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json([
+                'errors' => [
+                    'email' => ['The provided credentials are incorrect.'],
+                    'password' => ['The provided credentials are incorrect.']],
+            ], 401);
+        }
+
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+        $request->session()->regenerate();
+
+        return response()->json([
+            'user' => $user,
+        ], 200);
     }
 
-    public function logout() {
-        return 'logout';
+    public function logout(Request $request) : JsonResponse
+    {    
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'message' => "You are logged out"
+        ], 200);
     }
 }
