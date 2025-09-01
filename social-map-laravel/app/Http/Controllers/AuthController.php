@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserLoginRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 201);
     }
 
@@ -40,7 +41,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 200);
     }
 
