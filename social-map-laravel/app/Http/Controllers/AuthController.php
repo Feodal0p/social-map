@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function user(Request $request) : UserResource
+    {
+        return new UserResource($request->user());
+    }
+
     public function register(UserRegisterRequest $request) : JsonResponse 
     {
         $data = $request->validated();
