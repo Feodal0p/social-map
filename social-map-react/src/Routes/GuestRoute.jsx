@@ -8,5 +8,5 @@ export default function GuestRoute({ children }) {
 
     if (loading) return <div>Loading...</div>;
 
-    return !user ? children : <Navigate to="/profile" />;
+    return !user ? children : <Navigate to={`/profile/${user.profile_id}`} />;
 }

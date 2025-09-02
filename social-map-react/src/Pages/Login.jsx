@@ -25,7 +25,7 @@ export default function Login() {
         }).then(async response => {
             if (response && response.data) {
                 await refreshUser();
-                navigate('/profile');
+                navigate('/');
             }
         })
     }

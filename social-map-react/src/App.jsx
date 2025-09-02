@@ -14,7 +14,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/profile" element={
+          <Route path="/profile/:id" element={
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>} />
