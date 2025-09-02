@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+.header {
+    @apply w-full bg-orange-100;
+}
+
+.nav {
+    @apply sm:flex sm:items-center w-full px-8;
+}
+
+.nav-left {
+    @apply flex sm:justify-start justify-center gap-4 sm:w-1/2 py-4;
+}
+
+.nav-right {
+    @apply flex sm:justify-end justify-center gap-4 sm:w-1/2 py-4;
+}
+
+.nav-link {
+    @apply text-xl font-semibold hover:bg-orange-200 px-4 rounded-2xl;
+}
