@@ -18,8 +18,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'created_at' => $this->created_at,
             'role' => $this->role,
+            'profile_id' => $this->whenLoaded('profile', fn() => $this->profile->id),
+            'profile_avatar' => $this->whenLoaded('profile', fn() => $this->profile->avatar),
         ];
     }
 }

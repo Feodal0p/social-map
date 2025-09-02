@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     public function user(Request $request) : UserResource
     {
-        return new UserResource($request->user());
+        return new UserResource($request->user()->load('profile'));
     }
 
     public function register(UserRegisterRequest $request) : JsonResponse 
@@ -22,6 +22,10 @@ class AuthController extends Controller
         $data = $request->validated();
         $data['role'] = User::ROLE_PARTICIPANT;
         $user = User::create($data);
+
+        $user->profile()->create([
+            'avatar' => '/storage/images/user-default.png',
+        ]);
 
         Auth::login($user);
         $request->session()->regenerate();
