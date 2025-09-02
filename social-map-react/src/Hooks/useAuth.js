@@ -8,10 +8,10 @@ export default function useAuth() {
 
     useEffect(() => {
         axios.get('/user')
-        .then(() => setUser(true))
-        .catch(() => setUser(false))
+        .then(res => setUser(res.data.data))
+        .catch(() => setUser(null))
         .finally(() => setLoading(false));
     }, [])
 
     return { user, loading }
-}    
+}

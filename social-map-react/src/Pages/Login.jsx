@@ -1,10 +1,12 @@
 import axios from "../Plugin/axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../Context/AppContext";
 
 export default function Login() {
 
     const navigate = useNavigate();
+    const { refreshUser } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -20,8 +22,9 @@ export default function Login() {
                 setErrors(error.response.data.errors);
                 console.log(error);
             }
-        }).then(function (response) {
+        }).then(async response => {
             if (response && response.data) {
+                await refreshUser();
                 navigate('/profile');
             }
         })

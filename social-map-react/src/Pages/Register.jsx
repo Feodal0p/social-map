@@ -1,10 +1,12 @@
 import axios from "../Plugin/axios"
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../Context/AppContext";
 
 export default function Register() {
 
     const navigate = useNavigate();
+    const { refreshUser } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -20,10 +22,10 @@ export default function Register() {
         await axios.post('/register', formData).catch(function (error) {
             if (error.response) {
                 setErrors(error.response.data.errors);
-                console.log(error.response.data);
             }
-        }).then(function (response) {
+        }).then(async response => {
             if (response && response.data) {
+                await refreshUser();
                 navigate('/profile');
             }
         })
