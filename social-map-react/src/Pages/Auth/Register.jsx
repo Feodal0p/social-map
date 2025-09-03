@@ -19,6 +19,7 @@ export default function Register() {
 
     async function handeRegister(e) {
         e.preventDefault()
+        await axios.get('/csrf-cookie');
         await axios.post('/register', formData).catch(function (error) {
             if (error.response) {
                 setErrors(error.response.data.errors);

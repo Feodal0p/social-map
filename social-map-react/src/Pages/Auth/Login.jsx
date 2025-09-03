@@ -17,6 +17,7 @@ export default function Login() {
 
     async function handeLogin(e) {
         e.preventDefault()
+        await axios.get('/csrf-cookie');
         await axios.post('/login', formData).catch(function (error) {
             if (error.response) {
                 setErrors(error.response.data.errors);
