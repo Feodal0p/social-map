@@ -1,7 +1,7 @@
-import axios from "../Plugin/axios"
+import axios from "@plugin/axios.js";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../Context/AppContext";
+import { AppContext } from "@context/AppContext";
 
 export default function Register() {
 

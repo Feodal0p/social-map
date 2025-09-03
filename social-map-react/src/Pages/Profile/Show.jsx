@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../Context/AppContext";
-import axios from "../Plugin/axios.js";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { AppContext } from "@context/AppContext";
+import axios from "@plugin/axios.js";
+import { Link, useParams} from "react-router-dom";
 
-export default function Profile() {
+export default function Show() {
 
-    const { user } = useContext(AppContext);
+    const { id } = useParams();
 
     const [profileData, setProfileData] = useState(null);
     const [permissions, setPermissions] = useState();
@@ -13,14 +13,14 @@ export default function Profile() {
 
     useEffect(() => {
         const getProfile = async () => {
-            await axios.get(`/profile/${user.profile_id}`).then(function (response) {
+            await axios.get(`/profile/${id}`).then(function (response) {
                 console.log(response.data);
                 setProfileData(response.data.data);
                 setPermissions(response.data.permissions);
             }).finally(() => setLoading(false));
         };
         getProfile();
-    },[user.profile_id]);
+    },[id]);
 
     if (loading) return <h1>Loading...</h1>;
 

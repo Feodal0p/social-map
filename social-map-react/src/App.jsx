@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
-import Profile from './Pages/Profile.jsx'
-import Register from './Pages/Register.jsx'
-import Login from './Pages/Login.jsx'
+import ShowProfile from './Pages/Profile/Show.jsx'
+import Register from './Pages/Auth/Register.jsx'
+import Login from './Pages/Auth/Login.jsx'
 import Home from './Pages/Home.jsx'
 import ProtectedRoute from './Routes/ProtectedRoute.jsx'
 import GuestRoute from './Routes/GuestRoute.jsx'
@@ -16,7 +16,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/profile/:id" element={
             <ProtectedRoute>
-              <Profile />
+              <ShowProfile />
             </ProtectedRoute>} />
           <Route index element={<Home />} />
         </Route>
