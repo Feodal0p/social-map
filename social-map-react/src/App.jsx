@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import ShowProfile from './Pages/Profile/Show.jsx'
+import UpdateProfile from './Pages/Profile/Update.jsx'
 import Register from './Pages/Auth/Register.jsx'
 import Login from './Pages/Auth/Login.jsx'
 import Home from './Pages/Home.jsx'
@@ -21,9 +22,10 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/profile/:id" element={
+          <Route path="/profile/:id" element={<ShowProfile />} />
+          <Route path="/profile/edit/:id" element={
             <ProtectedRoute>
-              <ShowProfile />
+              <UpdateProfile />
             </ProtectedRoute>} />
           <Route index element={<Home />} />
         </Route>
