@@ -9,6 +9,7 @@ export default function Profile() {
 
     const [profileData, setProfileData] = useState(null);
     const [permissions, setPermissions] = useState();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getProfile = async () => {
@@ -16,10 +17,12 @@ export default function Profile() {
                 console.log(response.data);
                 setProfileData(response.data.data);
                 setPermissions(response.data.permissions);
-            });
+            }).finally(() => setLoading(false));
         };
         getProfile();
     },[user.profile_id]);
+
+    if (loading) return <h1>Loading...</h1>;
 
     return (
         <> 

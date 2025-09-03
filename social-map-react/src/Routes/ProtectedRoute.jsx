@@ -6,7 +6,7 @@ export default function ProtectedRoute({ children }) {
 
     const { user, loading } = useContext(AppContext);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <h1>Loading...</h1>;
 
     return user ? children : <Navigate to="/login" />;
 }
