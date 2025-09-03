@@ -7,8 +7,15 @@ import Home from './Pages/Home.jsx'
 import ProtectedRoute from './Routes/ProtectedRoute.jsx'
 import GuestRoute from './Routes/GuestRoute.jsx'
 import MainLayout from './Layouts/MainLayout.jsx'
+import { useContext } from 'react'
+import { AppContext } from '@context/AppContext'
+import Loader from './Components/Loader.jsx'
 
 export default function App() {
+
+  const {loading} = useContext(AppContext)
+
+  if (loading) return <Loader />;
 
   return (
     <BrowserRouter>

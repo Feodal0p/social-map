@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 
 export default function AppProvider({ children }) {
 
-    const { user: initialUser, loading} = useAuth();
+    const { user: initialUser, loading: initialLoading } = useAuth();
     const [user, setUser] = useState(initialUser);
+    const [loading, setLoading] = useState(initialLoading);
 
     const refreshUser = async () => {
         const res = await axios.get('/user');
@@ -16,7 +17,8 @@ export default function AppProvider({ children }) {
 
     useEffect(() => {
         setUser(initialUser);
-    }, [initialUser]);
+        setLoading(initialLoading);
+    }, [initialUser, initialLoading]);
 
     return (
         <AppContext.Provider value={{ user, loading, refreshUser }}>

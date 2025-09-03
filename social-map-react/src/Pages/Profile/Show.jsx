@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AppContext } from "@context/AppContext";
 import axios from "@plugin/axios.js";
 import { Link, useParams} from "react-router-dom";
+import Loader from "../../Components/Loader";
 
 export default function Show() {
 
@@ -22,7 +23,7 @@ export default function Show() {
         getProfile();
     },[id]);
 
-    if (loading) return <h1>Loading...</h1>;
+    if (loading) return <Loader/>;
 
     return (
         <> 
