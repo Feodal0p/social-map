@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\ProfileResource;
 use App\Models\Profile;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function show(Profile $profile) : JsonResponse
+    public function show(Profile $profile): JsonResponse
     {
         /** @var \App\Models\User */
         $user = auth('sanctum')->user();
@@ -21,9 +22,28 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update()
+    public function update(ProfileUpdateRequest $request, Profile $profile): JsonResponse
     {
+        $data = $request->validated();
 
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = '/storage/' . $data['avatar'];
+
+            if ($profile->avatar) {
+                Storage::disk('public')->delete($profile->avatar);
+            }
+
+        } else {
+            unset($data['avatar']);
+        }
+        
+        $profile->update($data);
+
+        return response()->json([
+            'request' => $request->all(),
+            'file' => $request->hasFile('avatar'),
+            'data' => $data,
+        ]);
     }
-
 }
