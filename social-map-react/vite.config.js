@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       '@plugin': '/src/Plugin',
       '@context': '/src/Context',
+      '@components': '/src/Components',
     }
   }
 })
