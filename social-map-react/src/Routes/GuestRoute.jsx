@@ -6,5 +6,5 @@ export default function GuestRoute({ children }) {
 
     const { user } = useContext(AppContext);
 
-    return !user ? children : <Navigate to={`/profile/${user.profile_id}`} />;
+    return !user ? children : <Navigate to="/" />;
 }

@@ -1,11 +1,10 @@
 import axios from "@plugin/axios.js";
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppContext } from "@context/AppContext";
 
 export default function Register() {
 
-    const navigate = useNavigate();
     const { refreshUser } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
@@ -27,7 +26,6 @@ export default function Register() {
         }).then(async response => {
             if (response && response.data) {
                 await refreshUser();
-                navigate('/profile');
             }
         })
     }
