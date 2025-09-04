@@ -80,3 +80,55 @@ h1 {
     @apply w-1/2 p-4 border-l border-gray-300;
 }
 
+.auth-page {
+    @apply flex justify-center items-center w-full h-screen;
+}
+
+.auth-card {
+    @apply bg-orange-200 w-96 h-fit p-4
+}
+
+.auth-card .nav-link {
+    @apply flex w-fit p-1; 
+}
+
+.auth-card .nav-link span {
+    @apply mx-2;
+}
+
+.auth-header {
+    @apply w-full border-y mt-4
+}
+
+.auth-header h1 {
+    @apply text-3xl font-bold mt-4 mb-1 mx-2 text-left w-full;
+}
+
+.auth-header h2 {
+    @apply text-xs mb-4 mx-2 text-left w-full;
+}
+
+.auth-form {
+    @apply flex flex-col mt-4
+}
+
+.auth-form label {
+    @apply text-left mx-2 font-semibold mb-2
+}
+
+.auth-form input {
+    @apply mx-2 px-4 py-2 bg-white border border-gray-500 mb-4
+}
+
+.auth-form button {
+    @apply bg-orange-300 hover:bg-orange-400 rounded-xl py-2 mx-2
+}
+
+.auth-footer {
+    @apply flex justify-center items-center mt-4 gap-2
+}
+
+.auth-footer .nav-link {
+    @apply text-blue-600 text-base hover:text-blue-800 hover:bg-transparent underline;
+}
+
