@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 
 Route::controller(AuthController::class)->group(function () {
@@ -15,3 +16,5 @@ Route::controller(ProfileController::class)->group(function () {
     Route::get('profile/{profile}', 'show');
     Route::patch('profile/{profile}', 'update')->middleware(['auth:sanctum', 'can:update,profile']);
 });
+
+Route::apiResource('events', EventController::class);
