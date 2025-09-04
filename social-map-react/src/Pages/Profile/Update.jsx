@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "@plugin/axios.js";
 import Loader from "../../Components/Loader";
 import { AppContext } from "@context/AppContext";
+import ProfileHeader from "@components/profile/ProfileHeader";
 
 export default function Update() {
 
@@ -10,7 +11,7 @@ export default function Update() {
 
     const navigate = useNavigate();
 
-    const { refreshUser } = useContext(AppContext); 
+    const { refreshUser } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
         avatar: "",
@@ -70,9 +71,7 @@ export default function Update() {
 
     return (
         <>
-            <div className="profile-header">
-                <h1>Редагувати профіль {formData?.user.name}</h1>
-            </div>
+            <ProfileHeader title={`Редагувати профіль ${formData?.user.name}`} />
             <form onSubmit={handleUpdate} className="profile-info" encType="multipart/form-data">
                 <div className="avatar-card">
                     <img src={`http://localhost:8000${formData?.avatar}`} alt="Avatar" className="avatar" />

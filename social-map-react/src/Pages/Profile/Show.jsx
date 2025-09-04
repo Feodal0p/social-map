@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@context/AppContext";
 import axios from "@plugin/axios.js";
 import { Link, useParams} from "react-router-dom";
 import Loader from "../../Components/Loader";
+import ProfileHeader from "@components/profile/ProfileHeader";
 
 export default function Show() {
 
     const { id } = useParams();
+
+    const { user } = useContext(AppContext);
 
     const [profileData, setProfileData] = useState(null);
     const [permissions, setPermissions] = useState();
@@ -27,14 +30,13 @@ export default function Show() {
 
     return (
         <> 
-            <div className="profile-header">
-                <h1>Профіль користувача {profileData?.user.name}</h1>
-                {permissions && permissions.can_edit ? (
-                    <Link to={`/profile/edit/${profileData.id}`} className="link-edit">
+            <ProfileHeader title={`Профіль користувача ${profileData?.user.name}`}>
+                {user && permissions && permissions.can_edit ? (
+                    <Link to={`/profile/edit/${profileData.id}`} className="btn-edit">
                         Редагувати профіль
                     </Link>
                 ) : (null)}
-            </div>
+            </ProfileHeader>
             <section className="profile-info">
                 <div className="avatar-card">
                     <img src={`http://localhost:8000${profileData?.avatar}`} alt="Avatar" className="avatar"/>

@@ -15,13 +15,18 @@ export default function AppProvider({ children }) {
         setUser(res.data.data);
     }
 
+    const logout = async () => {
+        await axios.post('/logout');
+        setUser(null);
+    }
+
     useEffect(() => {
         setUser(initialUser);
         setLoading(initialLoading);
     }, [initialUser, initialLoading]);
 
     return (
-        <AppContext.Provider value={{ user, loading, refreshUser }}>
+        <AppContext.Provider value={{ user, loading, refreshUser, logout }}>
             {children}
         </AppContext.Provider>
     )

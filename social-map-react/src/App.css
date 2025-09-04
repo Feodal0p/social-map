@@ -5,11 +5,11 @@ header {
 }
 
 nav {
-    @apply sm:flex sm:items-center w-full px-8;
+    @apply md:flex md:items-center w-full px-8;
 }
 
 .nav-left {
-    @apply flex sm:justify-start justify-center gap-4 sm:w-1/2 py-4 items-center;
+    @apply flex md:justify-start justify-center gap-4 md:w-1/2 py-4 items-center border-b md:border-0;
 }
 
 .nav-left .nav-link {
@@ -17,7 +17,7 @@ nav {
 }
 
 .nav-right {
-    @apply flex sm:justify-end justify-center sm:w-1/2 py-4;
+    @apply flex md:justify-end justify-center md:w-1/2 py-4;
 }
 
 .nav-right .nav-link {
@@ -41,11 +41,27 @@ h1 {
 }
 
 .profile-header {
-    @apply flex flex-col items-center justify-center gap-4 sm:flex-row;
+    @apply flex justify-between items-center md:flex-row flex-col mx-10;
 }
 
-.link-edit {
-    @apply bg-gray-300 px-4 py-2 mb-4 sm:mb-0 rounded-2xl hover:bg-gray-400;
+.profile-header-info {
+    @apply flex md:flex-row flex-col items-center justify-between md:gap-6;
+}
+
+.btn-edit {
+    @apply bg-gray-300 px-4 py-2 mb-4 md:mb-0 rounded-2xl hover:bg-gray-400;
+}
+
+.btn-back {
+    @apply bg-gray-300 hover:bg-gray-400 rounded-2xl py-1 mt-4 md:m-0 w-20 px-4;
+}
+
+.btn-logout {
+    @apply bg-red-300 hover:bg-red-400 rounded-2xl py-1 mb-4 md:m-0 w-20 px-4;
+}
+
+.space {
+    @apply w-20
 }
 
 .profile-info {
