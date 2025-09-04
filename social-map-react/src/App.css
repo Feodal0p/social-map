@@ -112,16 +112,24 @@ h1 {
     @apply flex flex-col mt-4
 }
 
+.form-group {
+    @apply flex flex-col mb-4
+}
+
 .auth-form label {
     @apply text-left mx-2 font-semibold mb-2
 }
 
 .auth-form input {
-    @apply mx-2 px-4 py-2 bg-white border border-gray-500 mb-4
+    @apply mx-2 px-4 py-2 bg-white border border-gray-500 mb-2
+}
+
+.error {
+    @apply text-red-600 text-sm mx-2 mb-2 font-semibold
 }
 
 .auth-form button {
-    @apply bg-orange-300 hover:bg-orange-400 rounded-xl py-2 mx-2
+    @apply bg-orange-300 hover:bg-orange-400 rounded-xl py-2 mx-2 mt-4
 }
 
 .auth-footer {
