@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "@context/AppContext";
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileHeader({ title, children }) {
+export default function ProfileHeader({ title, children, can_logout }) {
 
     const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ export default function ProfileHeader({ title, children }) {
                 <h1>{title}</h1>
                 {children}
             </div>
-            {user ? (<button className="btn-logout" onClick={handleLogout}>
+            {user && can_logout ? (<button className="btn-logout" onClick={handleLogout}>
                 Вийти
             </button>) : (<div className="space"/>)}
         </div>

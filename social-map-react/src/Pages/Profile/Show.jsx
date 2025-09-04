@@ -18,7 +18,6 @@ export default function Show() {
     useEffect(() => {
         const getProfile = async () => {
             await axios.get(`/profile/${id}`).then(function (response) {
-                console.log(response.data);
                 setProfileData(response.data.data);
                 setPermissions(response.data.permissions);
             }).finally(() => setLoading(false));
@@ -30,7 +29,8 @@ export default function Show() {
 
     return (
         <> 
-            <ProfileHeader title={`Профіль користувача ${profileData?.user.name}`}>
+            <ProfileHeader title={`Профіль користувача ${profileData?.user.name}`}
+             can_logout={permissions.can_edit}>
                 {user && permissions && permissions.can_edit ? (
                     <Link to={`/profile/edit/${profileData.id}`} className="btn-edit">
                         Редагувати профіль
