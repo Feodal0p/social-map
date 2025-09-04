@@ -15,12 +15,14 @@ export default function Header() {
                 </div>
                 {user ? (
                     <div className="nav-right">
+                        <Link to={`/profile/${user.profile_id}`} className="nav-link">
                         <img
                             src={`http://localhost:8000${user.profile_avatar}`} 
                             alt="Avatar" 
                             className="header-avatar"
                         />
-                        <Link to={`/profile/${user.profile_id}`} className="nav-link">Profile</Link>
+                        <span>Profile</span>
+                        </Link>
                     </div>
                 ) : (
                     <div className="nav-right">

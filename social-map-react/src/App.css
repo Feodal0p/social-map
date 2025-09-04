@@ -9,11 +9,23 @@ nav {
 }
 
 .nav-left {
-    @apply flex sm:justify-start justify-center gap-4 sm:w-1/2 py-4;
+    @apply flex sm:justify-start justify-center gap-4 sm:w-1/2 py-4 items-center;
+}
+
+.nav-left .nav-link {
+    @apply text-3xl;
 }
 
 .nav-right {
     @apply flex sm:justify-end justify-center sm:w-1/2 py-4;
+}
+
+.nav-right .nav-link {
+    @apply flex;
+}
+
+.nav-right .nav-link span {
+    @apply ml-2;
 }
 
 .header-avatar {
@@ -21,7 +33,7 @@ nav {
 }
 
 .nav-link {
-    @apply text-xl font-semibold hover:bg-orange-200 px-4 rounded-2xl;
+    @apply text-xl font-semibold hover:bg-orange-300 px-4 py-1 rounded-2xl items-center;
 }
 
 h1 {
