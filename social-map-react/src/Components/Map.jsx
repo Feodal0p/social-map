@@ -2,7 +2,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useRef } from 'react';
 
-export default function Map() {
+export default function Map({ events = [] }) {
 
     const mapContainerRef = useRef();
     const mapRef = useRef();
@@ -23,11 +23,18 @@ export default function Map() {
             maxBounds: bounds
         });
 
+        events.forEach(event => {
+            new mapboxgl.Marker()
+                .setLngLat([event.latitude, event.longitude])
+                .setPopup(new mapboxgl.Popup().setText(event.title))
+                .addTo(mapRef.current);
+        });
+
         return () => {
             mapRef.current.remove();
         };
 
-    }, []);
+    }, [events]);
 
 
     return (
