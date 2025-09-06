@@ -20,6 +20,13 @@ class EventController extends Controller
         ]);
     }
 
+    public function latest(): JsonResponse
+    {
+        return response()->json([
+            'data' => EventResource::collection(Event::with('creator')->latest()->take(4)->get()),
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

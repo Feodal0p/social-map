@@ -17,4 +17,11 @@ Route::controller(ProfileController::class)->group(function () {
     Route::patch('profile/{profile}', 'update')->middleware(['auth:sanctum', 'can:update,profile']);
 });
 
-Route::apiResource('events', EventController::class);
+Route::controller(EventController::class)->group(function () {
+    Route::get('events', 'index');
+    Route::get('events/latest', 'latest');
+    Route::get('events/{event}', 'show');
+    Route::post('events', 'store')->middleware('auth:sanctum');
+    Route::patch('events/{event}', 'update')->middleware('auth:sanctum');
+    Route::delete('events/{event}', 'destroy')->middleware('auth:sanctum');
+});
