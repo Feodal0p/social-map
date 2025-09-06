@@ -11,7 +11,22 @@ services:
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  nominatim:
+    image: mediagis/nominatim:5.1
+    ports:
+      - "8080:8080"
+    environment:
+      PBF_URL: https://download.geofabrik.de/europe/ukraine-latest.osm.pbf
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD}
+      REVERSE_ONLY: true
+    volumes:
+      - nominatim-data:/var/lib/postgresql/14/main
+    restart: unless-stopped
+
+volumes:
+  nominatim-data:
