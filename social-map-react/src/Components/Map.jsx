@@ -10,11 +10,23 @@ export default function Map() {
 
     useEffect(() => {
         mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+
+        const bounds = [
+            [25.13958, 50.62708],
+            [25.48671, 50.84758]
+        ];
+
         mapRef.current = new mapboxgl.Map({
             container: mapContainerRef.current,
-            center: [-74.5, 40],
-            zoom: 9
+            center: [25.32648, 50.74740],
+            zoom: 9,
+            maxBounds: bounds
         });
+
+        return () => {
+            mapRef.current.remove();
+        };
+
     }, []);
 
 
