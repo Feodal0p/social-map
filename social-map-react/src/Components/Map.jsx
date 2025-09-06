@@ -1,52 +1,45 @@
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
 export default function Map({ events = [], roles = [] }) {
 
-    const mapContainerRef = useRef();
     const mapRef = useRef();
     const [createEventCoords, setCreateEventCoords] = useState(null);
     const [eventAddress, setEventAddress] = useState('');
 
     useEffect(() => {
-        mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+        if (!mapRef.current) {
+            mapRef.current = L.map('map', {
+                center: [50.74740, 25.32648],
+                zoomControl: false,
+                zoom: 13,
+                minZoom: 12,
+                maxBounds: [[50.82721, 25.19826], [50.69230229359596, 25.442276000976566]],
+            });
 
-        const bounds = [
-            [25.13958, 50.62708],
-            [25.48671, 50.84758]
-        ];
-
-        mapRef.current = new mapboxgl.Map({
-            container: mapContainerRef.current,
-            center: [25.32648, 50.74740],
-            zoom: 9,
-            maxBounds: bounds
-        });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(mapRef.current);
+        }
 
         events.forEach(event => {
-            new mapboxgl.Marker()
-                .setLngLat([event.latitude, event.longitude])
-                .setPopup(new mapboxgl.Popup().setText(event.title))
-                .addTo(mapRef.current);
+            L.marker([event.latitude, event.longitude])
+                .addTo(mapRef.current)
+                .bindPopup(event.title);
         });
-
-        return () => {
-            mapRef.current.remove();
-        };
-
     }, [events]);
 
     useEffect(() => {
         mapRef.current.on('click', (e) => {
             const allowedRoles = ['admin', 'organizer'];
-            if (e.originalEvent.target === mapRef.current.getCanvas() &&
-                allowedRoles.some(role => roles.includes(role))) {
+            if (allowedRoles.some(role => roles.includes(role))) {
                 if (createEventCoords) {
                     setCreateEventCoords(null);
+                    setEventAddress('');
                 } else {
-                    setCreateEventCoords(e.lngLat);
+                    setCreateEventCoords(e.latlng);
                 }
             }
         });
@@ -57,20 +50,19 @@ export default function Map({ events = [], roles = [] }) {
         const getInfoForCreatedEvent = async () => {
             if (!createEventCoords) return;
             const { lng, lat } = createEventCoords;
-                const res = await axios.get(
-                    `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`
-                );
-                setEventAddress(res.data.features[0].properties.name + ', ' + 
-                    res.data.features[1].properties.place_formatted || '');
+            const res = await axios.get(
+                `http://localhost:8080/reverse?lat=${lat}&lon=${lng}&format=json`
+            );
+            setEventAddress(res.data.display_name || '');
         };
         getInfoForCreatedEvent();
     }, [createEventCoords]);
 
     return (
         <>
-            <div id="map"
-                style={{ width: '100vw', height: '100vh' }}
-                ref={mapContainerRef}>
+            <div
+                id="map"
+                style={{ width: '100vw', height: '100vh' }}>
             </div>
             {createEventCoords && (
                 <div className="create-event-popup">

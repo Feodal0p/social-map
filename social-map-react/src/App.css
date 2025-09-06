@@ -5,7 +5,7 @@ header {
 }
 
 .map-header {
-    @apply fixed top-0 left-0 z-50 bg-transparent;
+    @apply fixed top-0 left-0 z-500 bg-transparent;
 }
 
 nav {
@@ -201,5 +201,5 @@ h1 {
 }
 
 .create-event-popup {
-    @apply z-50 absolute bottom-0 left-1/2 translate-x-[-50%] w-96 bg-orange-200/70 rounded-t-2xl;
+    @apply z-500 absolute bottom-0 left-1/2 translate-x-[-50%] w-96 bg-orange-200/70 rounded-t-2xl;
 }
