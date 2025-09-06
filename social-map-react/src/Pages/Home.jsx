@@ -8,7 +8,7 @@ export default function Home() {
 
     useEffect(() => {
         const getEvents = async () => {
-            await axios.get('/events').then(res => {
+            await axios.get('/events/latest').then(res => {
                 setEvents(res.data.data)
                 console.log(res.data.data)
             })
@@ -26,7 +26,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="home-right">
-                    <Link>
+                    <Link to='/map'>
                         <img src="http://localhost:8000/storage/images/map.png" alt="map-preview" />
                         <span>Explore the Map</span>
                     </Link>
