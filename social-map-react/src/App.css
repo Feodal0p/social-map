@@ -4,6 +4,10 @@ header {
     @apply w-full bg-orange-100;
 }
 
+.map-header {
+    @apply fixed top-0 left-0 z-50 bg-transparent;
+}
+
 nav {
     @apply md:flex md:items-center w-full px-8;
 }
@@ -12,8 +16,12 @@ nav {
     @apply flex md:justify-start justify-center gap-4 md:w-1/2 py-4 items-center border-b md:border-0;
 }
 
+.map-header .nav-left {
+    @apply border-0 py-2;
+}
+
 .nav-left .nav-link {
-    @apply text-3xl;
+    @apply text-2xl;
 }
 
 .nav-right {
@@ -21,7 +29,7 @@ nav {
 }
 
 .nav-right .nav-link {
-    @apply flex;
+    @apply flex mx-2;
 }
 
 .nav-right .nav-link span {
@@ -34,6 +42,10 @@ nav {
 
 .nav-link {
     @apply text-xl font-semibold hover:bg-orange-300 px-4 py-1 rounded-2xl items-center;
+}
+
+.map-header .nav-link {
+    @apply bg-orange-200/70 hover:bg-orange-300;
 }
 
 h1 {

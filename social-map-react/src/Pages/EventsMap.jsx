@@ -18,8 +18,6 @@ export default function EventsMap() {
     }, []);
 
     return (
-        <div>
             <Map events={events} />
-        </div>
     );
 }

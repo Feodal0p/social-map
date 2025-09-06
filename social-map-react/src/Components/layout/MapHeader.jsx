@@ -7,7 +7,7 @@ export default function Header() {
     const { user } = useContext(AppContext)
 
     return (
-        <header className="header">
+        <header className="map-header">
             <nav className="nav">
                 <div className="nav-left">
                     <Link to="/" className="nav-link">

@@ -12,6 +12,7 @@ import { useContext } from 'react'
 import { AppContext } from '@context/AppContext'
 import Loader from './Components/Loader.jsx'
 import EventsMap from './Pages/EventsMap.jsx'
+import MapLayout from './Layouts/MapLayout.jsx'
 
 export default function App() {
 
@@ -30,7 +31,9 @@ export default function App() {
             </ProtectedRoute>} />
           <Route index element={<Home />} />
         </Route>
+        <Route element={<MapLayout />}>
         <Route path="/map" element={<EventsMap />} />
+        </Route>
         <Route path="/register" element={
           <GuestRoute>
             <Register />
