@@ -1,8 +1,11 @@
 import Map from '@components/Map.jsx';
 import axios from '@plugin/axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from '@context/AppContext.jsx';
 
 export default function EventsMap() {
+
+    const { user } = useContext(AppContext)
 
     const [events, setEvents] = useState([]);
 
@@ -18,6 +21,6 @@ export default function EventsMap() {
     }, []);
 
     return (
-            <Map events={events} />
+        <Map events={events} roles={user?.roles} />
     );
 }
