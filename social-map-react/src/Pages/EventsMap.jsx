@@ -9,6 +9,9 @@ export default function EventsMap() {
 
     const [events, setEvents] = useState([]);
 
+    const [createEventCoords, setCreateEventCoords] = useState(null);
+    const [eventAddress, setEventAddress] = useState('');
+
     useEffect(() => {
         const getEvents = async () => {
             await axios.get('/events').then((res) => {
@@ -21,6 +24,19 @@ export default function EventsMap() {
     }, []);
 
     return (
-        <Map events={events} roles={user?.roles} />
+        <>
+            <Map
+                events={events}
+                roles={user?.roles}
+                createEventCoords={createEventCoords}
+                setCreateEventCoords={setCreateEventCoords}
+                setEventAddress={setEventAddress} />
+            {createEventCoords && (
+                <div className="create-event-popup">
+                    <button>Create Event</button>
+                    <p>{eventAddress}</p>
+                </div>
+            )}
+        </>
     );
 }

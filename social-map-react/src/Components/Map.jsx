@@ -1,13 +1,12 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import axios from 'axios';
 
-export default function Map({ events = [], roles = [] }) {
+export default function Map({ events = [], roles = [], 
+    createEventCoords, setCreateEventCoords, setEventAddress }) {
 
     const mapRef = useRef();
-    const [createEventCoords, setCreateEventCoords] = useState(null);
-    const [eventAddress, setEventAddress] = useState('');
 
     useEffect(() => {
         if (!mapRef.current) {
@@ -44,7 +43,7 @@ export default function Map({ events = [], roles = [] }) {
             }
         });
 
-    }, [roles, createEventCoords]);
+    }, [roles, createEventCoords, setCreateEventCoords, setEventAddress]);
 
     useEffect(() => {
         const getInfoForCreatedEvent = async () => {
@@ -53,23 +52,24 @@ export default function Map({ events = [], roles = [] }) {
             const res = await axios.get(
                 `http://localhost:8080/reverse?lat=${lat}&lon=${lng}&format=json`
             );
-            setEventAddress(res.data.display_name || '');
+            const address = res.data.address || {};
+            const locality = address.city || address.town || address.village || '';
+            const shortAddress = [
+                ([address.road, address.house_number].filter(Boolean).join(' ')),
+                locality,
+                address.state,
+                address.country
+            ].filter(Boolean).join(', ');
+            setEventAddress(shortAddress || res.data.display_name);
+            console.log(res.data);
         };
         getInfoForCreatedEvent();
-    }, [createEventCoords]);
+    }, [createEventCoords, setEventAddress]);
 
     return (
-        <>
             <div
                 id="map"
                 style={{ width: '100vw', height: '100vh' }}>
             </div>
-            {createEventCoords && (
-                <div className="create-event-popup">
-                    <h1>Create Event</h1>
-                    <p>{eventAddress}</p>
-                </div>
-            )}
-        </>
     );
 }
