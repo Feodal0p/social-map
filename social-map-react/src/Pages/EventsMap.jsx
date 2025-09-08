@@ -60,7 +60,13 @@ export default function EventsMap() {
             setShowSidebar(false);
             setError('');
         }).catch((err) => {
-            setError(err.response.data.errors);
+            if (err.response?.data?.errors) {
+                setError(err.response.data.errors);
+            } else if (err.response?.data?.message) {
+                setError({ global: err.response.data.message });
+            } else {
+                setError({ global: 'Сталася невідома помилка' });
+            }
         });
     }
 
@@ -92,12 +98,13 @@ export default function EventsMap() {
                     </div>
                     <div className="event-sidebar-content">
                         <h1>Create Event</h1>
+                        {error && error.global && <div className="error">{error.global}</div>}
                         <form className='event-form-create' onSubmit={handleCreate}>
                             <label htmlFor="title">Title</label>
                             <input type="text" id="title" placeholder="Event Title"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
-                            {error.title && <div className="error">{error.title[0]}</div>}
+                            {error && error.title && <div className="error">{error.title[0]}</div>}
                             <label htmlFor="description">Description</label>
                             <textarea rows='5' id="description" placeholder="Event Description"
                                 value={formData.description}
@@ -106,12 +113,12 @@ export default function EventsMap() {
                             <input type="datetime-local" id="date-start"
                                 value={formData.start_time}
                                 onChange={(e) => setFormData({ ...formData, start_time: e.target.value })} />
-                            {error.start_time && <div className="error">{error.start_time[0]}</div>}
+                            {error && error.start_time && <div className="error">{error.start_time[0]}</div>}
                             <label htmlFor="date-end">Date & Time end</label>
                             <input type="datetime-local" id="date-end"
                                 value={formData.end_time}
                                 onChange={(e) => setFormData({ ...formData, end_time: e.target.value })} />
-                            {error.end_time && <div className="error">{error.end_time[0]}</div>}
+                            {error && error.end_time && <div className="error">{error.end_time[0]}</div>}
                             <label htmlFor="location">Location</label>
                             <textarea name='location' id="location" value={eventAddress} readOnly />
                             <button type="submit">Create Event</button>

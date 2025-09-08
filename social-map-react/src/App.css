@@ -224,6 +224,10 @@ h1 {
     @apply m-0;
 }
 
+.event-sidebar-content .error {
+    @apply mt-4 mx-0 mb-0;
+}
+
 .event-form-create label {
     @apply mt-4;
 }
