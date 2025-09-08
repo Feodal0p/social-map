@@ -124,10 +124,6 @@ h1 {
     @apply flex flex-col mt-4
 }
 
-.form-group {
-    @apply flex flex-col mb-4
-}
-
 .auth-form label {
     @apply text-left mx-2 font-semibold mb-2
 }
@@ -206,4 +202,44 @@ h1 {
 
 .create-event-popup button {
     @apply text-2xl font-bold p-2 my-4 mx-auto text-center bg-orange-300/70 hover:bg-orange-400 rounded-2xl 
+}
+
+.event-sidebar {
+    @apply fixed z-600 top-0 left-0 w-md h-full bg-white shadow-lg p-4 overflow-y-auto;
+}
+
+.event-sidebar-header {
+    @apply flex justify-between items-center border-b pb-2 mb-4;
+}
+
+.event-sidebar-header button {
+    @apply text-xl font-bold text-red-700 hover:cursor-pointer;
+}
+
+.event-form-create {
+    @apply flex flex-col;
+}
+
+.event-sidebar-content h1 {
+    @apply m-0;
+}
+
+.event-form-create label {
+    @apply mt-4;
+}
+
+.event-form-create input {
+    @apply p-2 border rounded-2xl;
+}
+
+.event-form-create textarea {
+    @apply border p-2 rounded-2xl resize-none;
+}
+
+.event-form-create button {
+    @apply bg-green-600 hover:bg-green-700 rounded-xl py-2 mx-2 mt-4 font-bold;
+}
+
+.event-form-create .error {
+    @apply m-0;
 }
