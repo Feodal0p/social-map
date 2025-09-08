@@ -2,13 +2,16 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Map({ events = [], roles = [],
-    createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, setShowSidebar }) {
+    createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, setShowSidebar, onSelectEvent }) {
 
     const mapRef = useRef();
 
     const [tempMarker, setTempMarker] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!mapRef.current) {
@@ -33,30 +36,38 @@ export default function Map({ events = [], roles = [],
                 mapRef.current._eventMarkers.forEach(marker => marker.remove());
             }
             mapRef.current._eventMarkers = events.map(event => {
-                return L.marker([event.latitude, event.longitude])
+                const marker = L.marker([event.latitude, event.longitude])
                     .addTo(mapRef.current)
                     .bindPopup(event.title);
+                marker.on('click', () => {
+                    setTempMarker(null);
+                    onSelectEvent(event);
+                    mapRef.current.setView([event.latitude, event.longitude - 0.0025], 17);
+                });
+                return marker
             });
         }
-    }, [events]);
+    }, [events, onSelectEvent]);
 
     useEffect(() => {
         mapRef.current.on('click', (e) => {
             const allowedRoles = ['admin', 'organizer'];
+            if (createEventCoords || showSidebar) {
+                setCreateEventCoords(null);
+                setShowSidebar(false);
+                setTempMarker(null);
+                setEventAddress('');
+                navigate('', { replace: true });
+            }
             if (allowedRoles.some(role => roles.includes(role))) {
-                if (createEventCoords || showSidebar) {
-                    setCreateEventCoords(null);
-                    setShowSidebar(false);
-                    setTempMarker(null);
-                    setEventAddress('');
-                } else {
+                if (!createEventCoords) {
                     setTempMarker(e.latlng);
                     setCreateEventCoords(e.latlng);
                 }
             }
         });
 
-    }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, setShowSidebar, showSidebar]);
+    }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, setShowSidebar, showSidebar, navigate]);
 
     useEffect(() => {
         const getInfoForCreatedEvent = async () => {

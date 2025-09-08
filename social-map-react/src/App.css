@@ -247,3 +247,15 @@ h1 {
 .event-form-create .error {
     @apply m-0;
 }
+
+.event-sidebar-label {
+    @apply font-semibold mt-4;
+}
+
+.event-time-creator {
+    @apply flex justify-between items-center
+}
+
+.event-time {
+    @apply flex-col;
+}
