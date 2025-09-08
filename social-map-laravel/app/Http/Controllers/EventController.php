@@ -30,9 +30,16 @@ class EventController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEventRequest $request)
+    public function store(StoreEventRequest $request): JsonResponse
     {
-        //
+        $data = $request->validated();
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+        $event = $user->events()->create($data);
+
+        return response()->json([
+            'data' => new EventResource($event->load('creator')),
+        ], 201);
     }
 
     /**
