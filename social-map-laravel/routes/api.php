@@ -22,6 +22,6 @@ Route::controller(EventController::class)->group(function () {
     Route::get('events/latest', 'latest');
     Route::get('events/{event}', 'show');
     Route::post('events', 'store')->middleware(['auth:sanctum', 'can:create,App\Models\Event']);
-    Route::patch('events/{event}', 'update')->middleware('auth:sanctum');
-    Route::delete('events/{event}', 'destroy')->middleware('auth:sanctum');
+    Route::patch('events/{event}', 'update')->middleware(['auth:sanctum', 'can:update,event']);
+    Route::delete('events/{event}', 'destroy')->middleware(['auth:sanctum', 'can:delete,event']);
 });
