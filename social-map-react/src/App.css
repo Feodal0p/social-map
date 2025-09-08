@@ -259,3 +259,19 @@ h1 {
 .event-time {
     @apply flex-col;
 }
+
+.event-edit-links {
+    @apply flex justify-between my-4;
+}
+
+.event-edit-links button{
+    @apply mx-2 p-2 rounded-xl hover:cursor-pointer;
+}
+
+.event-edit-button {
+    @apply bg-blue-500 hover:bg-blue-700 text-white;
+ }
+
+.event-delete-button {
+    @apply bg-red-500 hover:bg-red-700 text-white;
+}

@@ -88,11 +88,29 @@ export default function EventsMap() {
         const eventId = params.get('event');
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
+            if (!event) return;
             setSelectedEvent(event);
             setSidebarMode('view');
             setShowSidebar(true);
         }
     }, [events]);
+
+    async function handleDelete() {
+        if (!selectedEvent) return;
+        if (!window.confirm('Ви впевнені, що хочете видалити цю подію?')) return;
+        await axios.delete(`/events/${selectedEvent.id}`).then(() => {
+            setEvents(events.filter(e => e.id !== selectedEvent.id));
+            setSelectedEvent(null);
+            setShowSidebar(false);
+            navigate('', { replace: true });
+        }).catch((err) => {
+            if (err.response?.data?.message) {
+                setError({ global: err.response.data.message });
+            } else {
+                setError({ global: 'Сталася невідома помилка' });
+            }
+        });
+    }
 
     return (
         <>
@@ -153,6 +171,13 @@ export default function EventsMap() {
                         )}
                         {sidebarMode && sidebarMode === 'view' && (
                             <>
+                                {error && error.global && <div className="error">{error.global}</div>}
+                                {selectedEvent.can_edit && (
+                                <div className='event-edit-links'>
+                                    <button className='event-edit-button'>Редагувати</button>
+                                    <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
+                                </div>
+                                )}
                                 <h1>{selectedEvent.title}</h1>
                                 <div className='event-time-creator'>
                                     <div className='event-time'>

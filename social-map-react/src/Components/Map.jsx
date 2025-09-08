@@ -58,8 +58,7 @@ export default function Map({ events = [], roles = [],
                 setTempMarker(null);
                 setEventAddress('');
                 navigate('', { replace: true });
-            }
-            if (allowedRoles.some(role => roles.includes(role))) {
+            } else if (allowedRoles.some(role => roles.includes(role))) {
                 if (!createEventCoords) {
                     setTempMarker(e.latlng);
                     setCreateEventCoords(e.latlng);
