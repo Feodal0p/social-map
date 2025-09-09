@@ -1,4 +1,5 @@
 import Map from '@components/Map.jsx';
+import EventForm from '@components/EventForm.jsx';
 import axios from '@plugin/axios';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
@@ -52,19 +53,9 @@ export default function EventsMap() {
         };
         await axios.post('/events', payload).then((res) => {
             setEvents([...events, res.data.data]);
-            setFormData({
-                title: '',
-                location: '',
-                latitude: '',
-                longitude: '',
-                description: '',
-                start_time: '',
-                end_time: ''
-            });
             setCreateEventCoords(null);
             setEventAddress('');
             setShowSidebar(false);
-            setError('');
         }).catch((err) => {
             if (err.response?.data?.errors) {
                 setError(err.response.data.errors);
@@ -112,6 +103,59 @@ export default function EventsMap() {
         });
     }
 
+    useEffect(() => {
+        setError('');
+        if (sidebarMode === 'edit' && selectedEvent) {
+            setFormData({
+                title: selectedEvent.title || '',
+                location: selectedEvent.location || '',
+                latitude: selectedEvent.latitude || '',
+                longitude: selectedEvent.longitude || '',
+                description: selectedEvent.description || '',
+                start_time: selectedEvent.start_time ? selectedEvent.start_time.slice(0, 16) : '',
+                end_time: selectedEvent.end_time ? selectedEvent.end_time.slice(0, 16) : ''
+            });
+        } else if (sidebarMode === 'create') {
+            setFormData({
+                title: '',
+                location: eventAddress || '',
+                latitude: createEventCoords?.lat || '',
+                longitude: createEventCoords?.lng || '',
+                description: '',
+                start_time: '',
+                end_time: ''
+            });
+        } else {
+            setFormData({
+                title: '',
+                location: '',
+                latitude: '',
+                longitude: '',
+                description: '',
+                start_time: '',
+                end_time: ''
+            });
+        }
+    }, [sidebarMode, selectedEvent, createEventCoords, eventAddress]);
+
+    async function handleEdit(e) {
+        e.preventDefault();
+        if (!selectedEvent) return;
+        await axios.patch(`/events/${selectedEvent.id}`, formData).then((res) => {
+            setEvents(events.map(e => e.id === selectedEvent.id ? res.data.data : e));
+            setSelectedEvent(res.data.data);
+            setSidebarMode('view');
+        }).catch((err) => {
+            if (err.response?.data?.errors) {
+                setError(err.response.data.errors);
+            } else if (err.response?.data?.message) {
+                setError({ global: err.response.data.message });
+            } else {
+                setError({ global: 'Сталася невідома помилка' });
+            }
+        });
+    }
+
     return (
         <>
             <Map
@@ -143,40 +187,20 @@ export default function EventsMap() {
                             <>
                                 <h1>Create Event</h1>
                                 {error && error.global && <div className="error">{error.global}</div>}
-                                <form className='event-form-create' onSubmit={handleCreate}>
-                                    <label htmlFor="title">Title</label>
-                                    <input type="text" id="title" placeholder="Event Title"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
-                                    {error && error.title && <div className="error">{error.title[0]}</div>}
-                                    <label htmlFor="description">Description</label>
-                                    <textarea rows='5' id="description" placeholder="Event Description"
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}></textarea>
-                                    <label htmlFor="date-start">Date & Time start</label>
-                                    <input type="datetime-local" id="date-start"
-                                        value={formData.start_time}
-                                        onChange={(e) => setFormData({ ...formData, start_time: e.target.value })} />
-                                    {error && error.start_time && <div className="error">{error.start_time[0]}</div>}
-                                    <label htmlFor="date-end">Date & Time end</label>
-                                    <input type="datetime-local" id="date-end"
-                                        value={formData.end_time}
-                                        onChange={(e) => setFormData({ ...formData, end_time: e.target.value })} />
-                                    {error && error.end_time && <div className="error">{error.end_time[0]}</div>}
-                                    <label htmlFor="location">Location</label>
-                                    <textarea name='location' id="location" value={eventAddress} readOnly />
-                                    <button type="submit">Create Event</button>
-                                </form>
+                                <EventForm formData={formData}
+                                    setFormData={setFormData}
+                                    error={error}
+                                    onSubmit={handleCreate} />
                             </>
                         )}
                         {sidebarMode && sidebarMode === 'view' && (
                             <>
                                 {error && error.global && <div className="error">{error.global}</div>}
                                 {selectedEvent.can_edit && (
-                                <div className='event-edit-links'>
-                                    <button className='event-edit-button'>Редагувати</button>
-                                    <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
-                                </div>
+                                    <div className='event-edit-links'>
+                                        <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
+                                        <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
+                                    </div>
                                 )}
                                 <h1>{selectedEvent.title}</h1>
                                 <div className='event-time-creator'>
@@ -198,6 +222,17 @@ export default function EventsMap() {
                                         <p>{selectedEvent.description}</p>
                                     </>
                                 )}
+                            </>
+                        )}
+                        {sidebarMode && sidebarMode === 'edit' && (
+                            <>
+                                <button onClick={() => setSidebarMode('view')} className='event-cancel-button'>Назад</button>
+                                <h1>Edit Event</h1>
+                                {error && error.global && <div className="error">{error.global}</div>}
+                                <EventForm formData={formData}
+                                    setFormData={setFormData}
+                                    error={error}
+                                    onSubmit={handleEdit} />
                             </>
                         )}
                     </div>
