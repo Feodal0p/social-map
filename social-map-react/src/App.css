@@ -279,3 +279,27 @@ h1 {
 .event-cancel-button {
     @apply bg-gray-500 hover:bg-gray-700 text-white mx-2 p-2 rounded-xl hover:cursor-pointer;
  }
+
+ .event-info {
+    @apply flex justify-between my-4;
+ }
+
+ .event-status {
+    @apply px-4 py-2 rounded-2xl font-semibold text-white;
+ }
+
+ .event-status-upcoming {
+    @apply bg-blue-600;
+ }
+
+.event-status-active {
+    @apply bg-green-600;
+}
+
+.event-status-finished {
+    @apply bg-gray-600;    
+}
+
+.event-status-canceled {
+    @apply bg-red-600;
+}

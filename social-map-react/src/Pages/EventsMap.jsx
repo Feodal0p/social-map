@@ -1,5 +1,6 @@
 import Map from '@components/Map.jsx';
 import EventForm from '@components/EventForm.jsx';
+import EventInfo from '@components/EventInfo.jsx';
 import axios from '@plugin/axios';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
@@ -19,7 +20,8 @@ export default function EventsMap() {
         longitude: '',
         description: '',
         start_time: '',
-        end_time: ''
+        end_time: '',
+        status: ''
     });
 
     const [createEventCoords, setCreateEventCoords] = useState(null);
@@ -45,13 +47,7 @@ export default function EventsMap() {
 
     async function handleCreate(e) {
         e.preventDefault();
-        const payload = {
-            ...formData,
-            location: eventAddress,
-            latitude: createEventCoords?.lat || '',
-            longitude: createEventCoords?.lng || ''
-        };
-        await axios.post('/events', payload).then((res) => {
+        await axios.post('/events', formData).then((res) => {
             setEvents([...events, res.data.data]);
             setCreateEventCoords(null);
             setEventAddress('');
@@ -113,7 +109,8 @@ export default function EventsMap() {
                 longitude: selectedEvent.longitude || '',
                 description: selectedEvent.description || '',
                 start_time: selectedEvent.start_time ? selectedEvent.start_time.slice(0, 16) : '',
-                end_time: selectedEvent.end_time ? selectedEvent.end_time.slice(0, 16) : ''
+                end_time: selectedEvent.end_time ? selectedEvent.end_time.slice(0, 16) : '',
+                status: '',
             });
         } else if (sidebarMode === 'create') {
             setFormData({
@@ -123,7 +120,8 @@ export default function EventsMap() {
                 longitude: createEventCoords?.lng || '',
                 description: '',
                 start_time: '',
-                end_time: ''
+                end_time: '',
+                status: ''
             });
         } else {
             setFormData({
@@ -133,7 +131,8 @@ export default function EventsMap() {
                 longitude: '',
                 description: '',
                 start_time: '',
-                end_time: ''
+                end_time: '',
+                status: ''
             });
         }
     }, [sidebarMode, selectedEvent, createEventCoords, eventAddress]);
@@ -165,7 +164,8 @@ export default function EventsMap() {
                 setEventAddress={setEventAddress}
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
-                onSelectEvent={handleSelectEvent} />
+                onSelectEvent={handleSelectEvent}
+            />
             {createEventCoords && !showSidebar && (
                 <div className="create-event-popup">
                     <button
@@ -202,6 +202,7 @@ export default function EventsMap() {
                                         <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                     </div>
                                 )}
+                                <EventInfo status={selectedEvent.status} />
                                 <h1>{selectedEvent.title}</h1>
                                 <div className='event-time-creator'>
                                     <div className='event-time'>
