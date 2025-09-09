@@ -23,6 +23,7 @@ class EventResource extends JsonResource
             'description' => $this->description,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
+            'status' => $this->status,
             'creator' => new UserResource($this->whenLoaded('creator')),
             'created_at' => $this->created_at,
             'can_edit' => $request->user() ? $request->user()->can('update', $this->resource) : false,

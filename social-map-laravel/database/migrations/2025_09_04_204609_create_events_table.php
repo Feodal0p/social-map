@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
+            $table->string('status')->default('upcoming');
             $table->timestamps();
         });
     }
