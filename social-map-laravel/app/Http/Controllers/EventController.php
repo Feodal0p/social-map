@@ -53,9 +53,14 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEventRequest $request, Event $event)
+    public function update(UpdateEventRequest $request, Event $event): JsonResponse
     {
-        //
+        $data = $request->validated();
+        $event->update($data);
+
+        return response()->json([
+            'data' => new EventResource($event->load('creator')),
+        ], 200);
     }
 
     /**
