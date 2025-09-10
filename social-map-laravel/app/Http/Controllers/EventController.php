@@ -27,6 +27,16 @@ class EventController extends Controller
         ]);
     }
 
+    public function cancel(Event $event): JsonResponse
+    {
+        $event->status = Event::STATUS_CANCELED;
+        $event->save();
+
+        return response()->json([
+            'data' => new EventResource($event->load('creator')),
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -24,4 +24,5 @@ Route::controller(EventController::class)->group(function () {
     Route::post('events', 'store')->middleware(['auth:sanctum', 'can:create,App\Models\Event']);
     Route::patch('events/{event}', 'update')->middleware(['auth:sanctum', 'can:update,event']);
     Route::delete('events/{event}', 'destroy')->middleware(['auth:sanctum', 'can:delete,event']);
+    Route::post('events/{event}/cancel', 'cancel')->middleware(['auth:sanctum', 'can:update,event']);
 });
