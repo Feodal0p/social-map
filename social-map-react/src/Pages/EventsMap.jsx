@@ -52,6 +52,7 @@ export default function EventsMap() {
             setCreateEventCoords(null);
             setEventAddress('');
             setShowSidebar(false);
+            handleSelectEvent(res.data.data);
         }).catch((err) => {
             if (err.response?.data?.errors) {
                 setError(err.response.data.errors);
