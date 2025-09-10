@@ -155,6 +155,24 @@ export default function EventsMap() {
         });
     }
 
+    async function handleCancel(eventId) {
+        if (!eventId) return;
+        if (!window.confirm('Ви впевнені, що хочете скасувати цю подію?')) return;
+        await axios.post(`/events/${eventId}/cancel`).then((res) => {
+            setEvents(events.map(e => e.id === eventId ? res.data.data : e));
+            setSelectedEvent(res.data.data);
+            setSidebarMode('view');
+        }).catch((err) => {
+            if (err.response?.data?.errors) {
+                setError(err.response.data.errors);
+            } else if (err.response?.data?.message) {
+                setError({ global: err.response.data.message });
+            } else {
+                setError({ global: 'Сталася невідома помилка' });
+            }
+        });
+    }
+
     return (
         <>
             <Map
@@ -199,6 +217,9 @@ export default function EventsMap() {
                                 {selectedEvent.can_edit && (
                                     <div className='event-edit-links'>
                                         <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
+                                        {selectedEvent?.status !== 'canceled' && selectedEvent?.status !== 'finished' && (
+                                        <button onClick={() => handleCancel(selectedEvent.id)} className='event-cancel-button'>Скасувати подію</button>
+                                        )}
                                         <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                     </div>
                                 )}
@@ -227,7 +248,7 @@ export default function EventsMap() {
                         )}
                         {sidebarMode && sidebarMode === 'edit' && (
                             <>
-                                <button onClick={() => setSidebarMode('view')} className='event-cancel-button'>Назад</button>
+                                <button onClick={() => setSidebarMode('view')} className='event-back-button'>Назад</button>
                                 <h1>Edit Event</h1>
                                 {error && error.global && <div className="error">{error.global}</div>}
                                 <EventForm formData={formData}
