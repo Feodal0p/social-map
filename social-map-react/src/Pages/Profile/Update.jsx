@@ -74,7 +74,7 @@ export default function Update() {
             <ProfileHeader title={`Редагувати профіль ${formData?.user.name}`} />
             <form onSubmit={handleUpdate} className="profile-info" encType="multipart/form-data">
                 <div className="avatar-card">
-                    <img src={`http://localhost:8000${formData?.avatar}`} alt="Avatar" className="avatar" />
+                    <img src={formData?.avatar} alt="Avatar" className="avatar" />
                     <input type="file" name="avatar"
                         onChange={(e) => setFormData({ ...formData, avatar: e.target.files[0] })} />
                 </div>

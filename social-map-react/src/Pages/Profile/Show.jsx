@@ -39,7 +39,7 @@ export default function Show() {
             </ProfileHeader>
             <section className="profile-info">
                 <div className="avatar-card">
-                    <img src={`http://localhost:8000${profileData?.avatar}`} alt="Avatar" className="avatar"/>
+                    <img src={profileData?.avatar} alt="Avatar" className="avatar"/>
                     <p>{profileData?.user.role}</p>
                 </div>
                 <div className="user-details">
