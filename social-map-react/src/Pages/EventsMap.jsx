@@ -21,7 +21,8 @@ export default function EventsMap() {
         description: '',
         start_time: '',
         end_time: '',
-        status: ''
+        status: '',
+        preview_image: '',
     });
 
     const [createEventCoords, setCreateEventCoords] = useState(null);
@@ -47,12 +48,20 @@ export default function EventsMap() {
 
     async function handleCreate(e) {
         e.preventDefault();
-        await axios.post('/events', formData).then((res) => {
+        const createFormData = (oldFormData) => {
+            return Object.keys(oldFormData).reduce((newFormData, key) => {
+                newFormData.append(key, oldFormData[key]);
+                return newFormData;
+            }, new FormData());
+        }
+        const newFormData = createFormData(formData);
+        await axios.post('/events', newFormData).then((res) => {
             setEvents([...events, res.data.data]);
             setCreateEventCoords(null);
             setEventAddress('');
             setShowSidebar(false);
             handleSelectEvent(res.data.data);
+            console.log("res: ", res.data.data);
         }).catch((err) => {
             if (err.response?.data?.errors) {
                 setError(err.response.data.errors);
@@ -112,6 +121,7 @@ export default function EventsMap() {
                 start_time: selectedEvent.start_time ? selectedEvent.start_time.slice(0, 16) : '',
                 end_time: selectedEvent.end_time ? selectedEvent.end_time.slice(0, 16) : '',
                 status: '',
+                preview_image: selectedEvent.preview_image || '',
             });
         } else if (sidebarMode === 'create') {
             setFormData({
@@ -122,7 +132,8 @@ export default function EventsMap() {
                 description: '',
                 start_time: '',
                 end_time: '',
-                status: ''
+                status: '',
+                preview_image: '',
             });
         } else {
             setFormData({
@@ -133,7 +144,8 @@ export default function EventsMap() {
                 description: '',
                 start_time: '',
                 end_time: '',
-                status: ''
+                status: '',
+                preview_image: '',
             });
         }
     }, [sidebarMode, selectedEvent, createEventCoords, eventAddress]);
@@ -219,23 +231,26 @@ export default function EventsMap() {
                                     <div className='event-edit-links'>
                                         <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
                                         {selectedEvent?.status !== 'canceled' && selectedEvent?.status !== 'finished' && (
-                                        <button onClick={() => handleCancel(selectedEvent.id)} className='event-cancel-button'>Скасувати подію</button>
+                                            <button onClick={() => handleCancel(selectedEvent.id)} className='event-cancel-button'>Скасувати подію</button>
                                         )}
                                         <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                     </div>
                                 )}
                                 <EventInfo status={selectedEvent.status} />
+                                {selectedEvent.preview_image && (
+                                    <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
+                                )}
                                 <h1>{selectedEvent.title}</h1>
                                 <div className='event-time-creator'>
+                                    <Link to={`/profile/${selectedEvent.creator.id}`} className='event-creator'>
+                                        {`created by ${selectedEvent.creator.name}`}
+                                    </Link>
                                     <div className='event-time'>
                                         <p>{"Початок: " + new Date(selectedEvent.start_time).toLocaleString()}</p>
                                         {selectedEvent.end_time && (
                                             <p>{"Кінець: " + new Date(selectedEvent.end_time).toLocaleString()}</p>
                                         )}
                                     </div>
-                                    <Link to={`/profile/${selectedEvent.creator.id}`}>
-                                        {selectedEvent.creator.name}
-                                    </Link>
                                 </div>
                                 <p className='event-sidebar-label'>Локація:</p>
                                 <p>{selectedEvent.location}</p>

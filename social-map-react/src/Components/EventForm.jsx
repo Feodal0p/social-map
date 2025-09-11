@@ -1,7 +1,16 @@
-export default function EventForm({ formData, setFormData, error, onSubmit}) {
+export default function EventForm({ formData, setFormData, error, onSubmit }) {
 
     return (
         <form className='event-form-create' onSubmit={onSubmit}>
+            {formData.preview_image && (
+                <img src={URL.createObjectURL(formData.preview_image)} alt="Event Preview" className='event-preview-image' />
+            )}
+            <label htmlFor="preview_image" className="event-form-preview_image">
+                {formData.preview_image?.name ? formData.preview_image.name : "Виберіть зображення для прев'ю"}
+            </label>
+            <input type="file" name="preview_image" id="preview_image"  style={{ display: 'none' }}
+                onChange={(e) => setFormData({ ...formData, preview_image: e.target.files[0] })} />
+            {error && error.preview_image && <div className="error">{error.preview_image[0]}</div>}
             <label htmlFor="title">Title</label>
             <input type="text" id="title" placeholder="Event Title"
                 value={formData.title}

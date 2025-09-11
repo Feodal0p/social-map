@@ -253,7 +253,11 @@ h1 {
 }
 
 .event-time-creator {
-    @apply flex justify-between items-center
+    @apply flex-col justify-between items-center
+}
+
+.event-creator {
+    @apply flex font-semibold text-lg justify-end hover:underline hover:text-blue-800
 }
 
 .event-time {
@@ -306,4 +310,12 @@ h1 {
 
 .event-cancel-button {
     @apply bg-rose-500 hover:bg-rose-700 text-white mx-2 p-2 rounded-xl hover:cursor-pointer;
+}
+
+.event-form-preview_image {
+    @apply bg-blue-600 hover:bg-blue-700 text-center rounded-xl py-2 mt-4 cursor-pointer text-white;
+}
+
+.event-preview-image {
+    @apply w-full h-64 my-4 rounded-lg object-cover;
 }
