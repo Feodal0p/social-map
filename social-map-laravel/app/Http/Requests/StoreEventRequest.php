@@ -22,6 +22,7 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'preview_image' => 'nullable|file|max:2048',
             'title' => 'required|string|max:255',
             'location' => 'nullable|string',
             'latitude' => 'required|numeric|between:-90,90',

@@ -25,6 +25,7 @@ class Event extends Model
         'start_time',
         'end_time',
         'status',
+        'preview_image',
     ];
 
     public function creator()

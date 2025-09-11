@@ -45,6 +45,13 @@ class EventController extends Controller
         $data = $request->validated();
         /** @var \App\Models\User */
         $user = auth('sanctum')->user();
+        
+        if ($request->hasFile('preview_image')) {
+            $data['preview_image'] = $request->file('preview_image')->store('preview_images', 'public');
+        } else {
+            $data['preview_image'] = 'images/no-preview.jpeg';
+        }
+
         $event = $user->events()->create($data);
 
         return response()->json([
