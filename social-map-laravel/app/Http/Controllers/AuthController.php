@@ -28,7 +28,7 @@ class AuthController extends Controller
         }
 
         $user->profile()->create([
-            'avatar' => '/storage/images/user-default.png',
+            'avatar' => '/images/user-default.png',
         ]);
 
         Auth::login($user);

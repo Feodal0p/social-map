@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'roles' => $this->roles->pluck('name'),
             'profile_id' => $this->whenLoaded('profile', fn() => $this->profile->id),
-            'profile_avatar' => $this->whenLoaded('profile', fn() => $this->profile->avatar),
+            'profile_avatar' => $this->whenLoaded('profile', fn() => asset('storage/' . $this->profile->avatar)),
         ];
     }
 }
