@@ -3,7 +3,9 @@ export default function EventForm({ formData, setFormData, error, onSubmit }) {
     return (
         <form className='event-form-create' onSubmit={onSubmit}>
             {formData.preview_image && (
-                <img src={URL.createObjectURL(formData.preview_image)} alt="Event Preview" className='event-preview-image' />
+                typeof formData.preview_image === 'string'
+                    ? <img src={formData.preview_image} alt="Event Preview" className='event-preview-image' />
+                    : <img src={URL.createObjectURL(formData.preview_image)} alt="Event Preview" className='event-preview-image' />
             )}
             <label htmlFor="preview_image" className="event-form-preview_image">
                 {formData.preview_image?.name ? formData.preview_image.name : "Виберіть зображення для прев'ю"}

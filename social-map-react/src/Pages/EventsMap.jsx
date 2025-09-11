@@ -46,14 +46,17 @@ export default function EventsMap() {
 
     }, []);
 
-    async function handleCreate(e) {
-        e.preventDefault();
-        const createFormData = (oldFormData) => {
+    const createFormData = (oldFormData) => {
             return Object.keys(oldFormData).reduce((newFormData, key) => {
-                newFormData.append(key, oldFormData[key]);
+                if (key === 'preview_image' && !(oldFormData[key] instanceof File)) {
+                    newFormData.append(key, '');
+                } else newFormData.append(key, oldFormData[key]);
                 return newFormData;
             }, new FormData());
         }
+
+    async function handleCreate(e) {
+        e.preventDefault();
         const newFormData = createFormData(formData);
         await axios.post('/events', newFormData).then((res) => {
             setEvents([...events, res.data.data]);
@@ -61,7 +64,6 @@ export default function EventsMap() {
             setEventAddress('');
             setShowSidebar(false);
             handleSelectEvent(res.data.data);
-            console.log("res: ", res.data.data);
         }).catch((err) => {
             if (err.response?.data?.errors) {
                 setError(err.response.data.errors);
@@ -153,7 +155,9 @@ export default function EventsMap() {
     async function handleEdit(e) {
         e.preventDefault();
         if (!selectedEvent) return;
-        await axios.patch(`/events/${selectedEvent.id}`, formData).then((res) => {
+        const newFormData = createFormData(formData);
+        newFormData.append('_method', 'PATCH');
+        await axios.post(`/events/${selectedEvent.id}`, newFormData).then((res) => {
             setEvents(events.map(e => e.id === selectedEvent.id ? res.data.data : e));
             setSelectedEvent(res.data.data);
             setSidebarMode('view');
