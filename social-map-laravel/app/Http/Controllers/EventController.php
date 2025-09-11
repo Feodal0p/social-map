@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\EventResource;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -45,11 +46,11 @@ class EventController extends Controller
         $data = $request->validated();
         /** @var \App\Models\User */
         $user = auth('sanctum')->user();
-        
+
         if ($request->hasFile('preview_image')) {
             $data['preview_image'] = $request->file('preview_image')->store('preview_images', 'public');
         } else {
-            $data['preview_image'] = 'images/no-preview.jpeg';
+            $data['preview_image'] = '/images/no-preview.jpeg';
         }
 
         $event = $user->events()->create($data);
@@ -73,6 +74,17 @@ class EventController extends Controller
     public function update(UpdateEventRequest $request, Event $event): JsonResponse
     {
         $data = $request->validated();
+
+        if ($request->hasFile('preview_image')) {
+            $data['preview_image'] = $request->file('preview_image')->store('preview_images', 'public');
+
+            if ($event->preview_image && $event->preview_image !== '/images/no-preview.jpeg') {
+                Storage::disk('public')->delete($event->preview_image);
+            }
+        } else {
+            unset($data['preview_image']);
+        }
+
         $event->update($data);
 
         return response()->json([
@@ -85,6 +97,9 @@ class EventController extends Controller
      */
     public function destroy(Event $event): JsonResponse
     {
+        if ($event->preview_image !== '/images/no-preview.jpeg') {
+            Storage::disk('public')->delete($event->preview_image);
+        }
         $event->delete();
 
         return response()->json([
