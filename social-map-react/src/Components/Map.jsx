@@ -50,21 +50,30 @@ export default function Map({ events = [], roles = [],
     }, [events, onSelectEvent]);
 
     useEffect(() => {
-        mapRef.current.on('click', (e) => {
+
+        function clearEventParam() {
+            const params = new URLSearchParams(location.search);
+            params.delete('event');
+            navigate({ search: params.toString() }, { replace: true });
+        }
+
+        function handleMapClick(e) {
             const allowedRoles = ['admin', 'organizer'];
             if (createEventCoords || showSidebar) {
                 setCreateEventCoords(null);
                 setShowSidebar(false);
                 setTempMarker(null);
                 setEventAddress('');
-                navigate('', { replace: true });
+                clearEventParam();
             } else if (allowedRoles.some(role => roles.includes(role))) {
                 if (!createEventCoords) {
                     setTempMarker(e.latlng);
                     setCreateEventCoords(e.latlng);
                 }
             }
-        });
+        }
+        
+        mapRef.current.on('click', handleMapClick);
 
     }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, setShowSidebar, showSidebar, navigate]);
 

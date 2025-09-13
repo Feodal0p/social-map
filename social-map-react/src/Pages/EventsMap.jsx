@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function EventsMap() {
 
-    const { user } = useContext(AppContext)
+    const { user, selectedStatus, setSelectedStatus, setLocalLoading } = useContext(AppContext)
 
     const navigate = useNavigate();
 
@@ -36,24 +36,25 @@ export default function EventsMap() {
     const [error, setError] = useState({});
 
     useEffect(() => {
+        setLocalLoading(true);
         const getEvents = async () => {
-            await axios.get('/events').then((res) => {
+            await axios.get(`/events?status=${selectedStatus}`).then((res) => {
                 setEvents(res.data.data);
-            });
+            }).finally(() => setLocalLoading(false));
         }
-
+        console.log('selectedStatus', selectedStatus);
         getEvents();
 
-    }, []);
+    }, [selectedStatus, setLocalLoading]);
 
     const createFormData = (oldFormData) => {
-            return Object.keys(oldFormData).reduce((newFormData, key) => {
-                if (key === 'preview_image' && !(oldFormData[key] instanceof File)) {
-                    newFormData.append(key, '');
-                } else newFormData.append(key, oldFormData[key]);
-                return newFormData;
-            }, new FormData());
-        }
+        return Object.keys(oldFormData).reduce((newFormData, key) => {
+            if (key === 'preview_image' && !(oldFormData[key] instanceof File)) {
+                newFormData.append(key, '');
+            } else newFormData.append(key, oldFormData[key]);
+            return newFormData;
+        }, new FormData());
+    }
 
     async function handleCreate(e) {
         e.preventDefault();
@@ -76,15 +77,19 @@ export default function EventsMap() {
     }
 
     function handleSelectEvent(event) {
+        const params = new URLSearchParams(location.search);
+        params.set('event', event.id);
+        navigate({ search: params.toString() });
         setSelectedEvent(event);
         setSidebarMode('view');
         setShowSidebar(true);
-        navigate(`?event=${event.id}`)
     }
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const eventId = params.get('event');
+        const status = params.get('status');
+        if (status) setSelectedStatus(status);
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
             if (!event) return;
@@ -92,7 +97,7 @@ export default function EventsMap() {
             setSidebarMode('view');
             setShowSidebar(true);
         }
-    }, [events]);
+    }, [events, setSelectedStatus]);
 
     async function handleDelete() {
         if (!selectedEvent) return;

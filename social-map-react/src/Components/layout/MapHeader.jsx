@@ -1,10 +1,19 @@
 import { useContext } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { AppContext } from "../../Context/AppContext"
 
 export default function Header() {
 
-    const { user } = useContext(AppContext)
+    const { user, selectedStatus, setSelectedStatus, localLoading } = useContext(AppContext)
+    
+    const navigate = useNavigate();
+
+    function handleStatusChange(e) {
+        setSelectedStatus(e.target.value);
+        const params = new URLSearchParams(location.search);
+        params.set('status', e.target.value);
+        navigate({ search: params.toString() });
+    }
 
     return (
         <header className="map-header">
@@ -14,6 +23,19 @@ export default function Header() {
                         <span>LOGO</span>
                         <span>Social Map</span>
                     </Link>
+                    {localLoading ? (<span className="status-select">Loading...</span>) : (
+                        <select
+                        value={selectedStatus}
+                        onChange={handleStatusChange}
+                        className="status-select"
+                    >
+                        <option value="all">Всі події</option>
+                        <option value="upcoming">Найближчі події</option>
+                        <option value="active">Активні події</option>
+                        <option value="finished">Завершені події</option>
+                        <option value="canceled">Скасовані події</option>
+                    </select>
+                    )}
                 </div>
                 {user ? (
                     <div className="nav-right">
