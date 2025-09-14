@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\EventResource;
+use App\Http\Resources\EventSmallResource;
 use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
@@ -16,7 +17,7 @@ class EventController extends Controller
      */
     public function index(): JsonResponse
     {
-        $events = Event::with(['creator', 'categories'])->get();
+        $events = Event::with('categories')->get();
 
         if (request()->filled('status') && request('status') !== 'all') {
             $events = $events->filter(function ($event) {
@@ -25,7 +26,7 @@ class EventController extends Controller
         }
 
         return response()->json([
-            'data' => EventResource::collection($events),
+            'data' => EventSmallResource::collection($events),
         ]);
     }
 
@@ -42,7 +43,7 @@ class EventController extends Controller
         $event->save();
 
         return response()->json([
-            'data' => new EventResource($event->load('creator')),
+            'data' => new EventSmallResource($event),
         ], 200);
     }
 
@@ -65,7 +66,7 @@ class EventController extends Controller
         $event->categories()->attach($data['categories']);
 
         return response()->json([
-            'data' => new EventResource($event->load(['creator', 'categories'])),
+            'data' => new EventSmallResource($event),
         ], 201);
     }
 
@@ -74,7 +75,9 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        //
+        return response()->json([
+            'data' => new EventResource($event->load(['creator', 'categories'])),
+        ]);
     }
 
     /**
@@ -98,7 +101,7 @@ class EventController extends Controller
         $event->categories()->sync($data['categories']);
 
         return response()->json([
-            'data' => new EventResource($event->load(['creator', 'categories'])),
+            'data' => new EventSmallResource($event),
         ], 200);
     }
 
