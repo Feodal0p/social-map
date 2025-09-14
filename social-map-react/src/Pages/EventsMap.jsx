@@ -23,6 +23,7 @@ export default function EventsMap() {
         end_time: '',
         status: '',
         preview_image: '',
+        categories: [],
     });
 
     const [createEventCoords, setCreateEventCoords] = useState(null);
@@ -42,7 +43,6 @@ export default function EventsMap() {
                 setEvents(res.data.data);
             }).finally(() => setLocalLoading(false));
         }
-        console.log('selectedStatus', selectedStatus);
         getEvents();
 
     }, [selectedStatus, setLocalLoading]);
@@ -52,6 +52,11 @@ export default function EventsMap() {
             if (key === 'preview_image' && !(oldFormData[key] instanceof File)) {
                 newFormData.append(key, '');
             } else newFormData.append(key, oldFormData[key]);
+            if (key === 'categories' && Array.isArray(oldFormData[key])) {
+                oldFormData[key].forEach(category => {
+                    newFormData.append('categories[]', category.id);
+                });
+            }
             return newFormData;
         }, new FormData());
     }
@@ -129,6 +134,7 @@ export default function EventsMap() {
                 end_time: selectedEvent.end_time ? selectedEvent.end_time.slice(0, 16) : '',
                 status: '',
                 preview_image: selectedEvent.preview_image || '',
+                categories: selectedEvent.categories || [],
             });
         } else if (sidebarMode === 'create') {
             setFormData({
@@ -141,6 +147,7 @@ export default function EventsMap() {
                 end_time: '',
                 status: '',
                 preview_image: '',
+                categories: [],
             });
         } else {
             setFormData({
@@ -153,6 +160,7 @@ export default function EventsMap() {
                 end_time: '',
                 status: '',
                 preview_image: '',
+                categories: [],
             });
         }
     }, [sidebarMode, selectedEvent, createEventCoords, eventAddress]);
@@ -164,6 +172,7 @@ export default function EventsMap() {
         newFormData.append('_method', 'PATCH');
         await axios.post(`/events/${selectedEvent.id}`, newFormData).then((res) => {
             setEvents(events.map(e => e.id === selectedEvent.id ? res.data.data : e));
+            console.log(res.data.data);
             setSelectedEvent(res.data.data);
             setSidebarMode('view');
         }).catch((err) => {
@@ -230,7 +239,8 @@ export default function EventsMap() {
                                 <EventForm formData={formData}
                                     setFormData={setFormData}
                                     error={error}
-                                    onSubmit={handleCreate} />
+                                    onSubmit={handleCreate}
+                                    mode={sidebarMode} />
                             </>
                         )}
                         {sidebarMode && sidebarMode === 'view' && (
@@ -245,7 +255,7 @@ export default function EventsMap() {
                                         <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                     </div>
                                 )}
-                                <EventInfo status={selectedEvent.status} />
+                                <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} />
                                 {selectedEvent.preview_image && (
                                     <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
                                 )}

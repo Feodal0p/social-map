@@ -1,4 +1,18 @@
-export default function EventForm({ formData, setFormData, error, onSubmit }) {
+import { useEffect, useState } from "react"
+import axios from "@plugin/axios"
+import Select from 'react-select'
+
+
+export default function EventForm({ formData, setFormData, error, onSubmit, mode }) {
+
+    const [categories, setCategories] = useState([])
+
+    useEffect(() => {
+        axios.get('/categories')
+            .then(response => {
+                setCategories(response.data)
+            })
+    }, [])
 
     return (
         <form className='event-form-create' onSubmit={onSubmit}>
@@ -10,7 +24,7 @@ export default function EventForm({ formData, setFormData, error, onSubmit }) {
             <label htmlFor="preview_image" className="event-form-preview_image">
                 {formData.preview_image?.name ? formData.preview_image.name : "Виберіть зображення для прев'ю"}
             </label>
-            <input type="file" name="preview_image" id="preview_image"  style={{ display: 'none' }}
+            <input type="file" name="preview_image" id="preview_image" style={{ display: 'none' }}
                 onChange={(e) => setFormData({ ...formData, preview_image: e.target.files[0] })} />
             {error && error.preview_image && <div className="error">{error.preview_image[0]}</div>}
             <label htmlFor="title">Title</label>
@@ -22,6 +36,22 @@ export default function EventForm({ formData, setFormData, error, onSubmit }) {
             <textarea rows='5' id="description" placeholder="Event Description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}></textarea>
+            <label htmlFor="categories">Categories (max 2)</label>
+            <Select
+                className="event-form-select"
+                isMulti
+                options={categories.map(category => ({ value: category.id, label: category.name }))}
+                value={formData.categories.map(category => ({ value: category.id, label: category.name }))}
+                onChange={(selectedOptions) => {
+                    if (selectedOptions.length <= 2) {
+                        setFormData({ ...formData, categories: selectedOptions.map(option => ({ id: option.value, name: option.label })) })
+                    }
+                }}
+                placeholder="Select categories"
+                isClearable={false}
+                closeMenuOnSelect={false}
+            />
+            {error && error.categories && <div className="error">{error.categories[0]}</div>}
             <label htmlFor="date-start">Date & Time start</label>
             <input type="datetime-local" id="date-start"
                 value={formData.start_time}
@@ -34,7 +64,9 @@ export default function EventForm({ formData, setFormData, error, onSubmit }) {
             {error && error.end_time && <div className="error">{error.end_time[0]}</div>}
             <label htmlFor="location">Location</label>
             <textarea name='location' id="location" value={formData.location} readOnly />
-            <button type="submit">Save Changes</button>
+            <button type="submit">
+                {mode === 'create' ? 'Create Event' : 'Update Event'}
+            </button>
         </form>
     )
 }
