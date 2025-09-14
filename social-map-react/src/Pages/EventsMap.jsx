@@ -34,6 +34,7 @@ export default function EventsMap() {
 
     const [selectedEvent, setSelectedEvent] = useState(null);
 
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
 
     useEffect(() => {
@@ -81,13 +82,20 @@ export default function EventsMap() {
         });
     }
 
+    function getEvent(id) {
+        axios.get(`/events/${id}`).then((res) => {
+            setSelectedEvent(res.data.data);
+        }).finally(() => setLoading(false));
+        setSidebarMode('view');
+        setShowSidebar(true);
+    }
+
     function handleSelectEvent(event) {
+        setLoading(true);
         const params = new URLSearchParams(location.search);
         params.set('event', event.id);
         navigate({ search: params.toString() });
-        setSelectedEvent(event);
-        setSidebarMode('view');
-        setShowSidebar(true);
+        getEvent(event.id);
     }
 
     useEffect(() => {
@@ -98,9 +106,7 @@ export default function EventsMap() {
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
             if (!event) return;
-            setSelectedEvent(event);
-            setSidebarMode('view');
-            setShowSidebar(true);
+            getEvent(event.id);
         }
     }, [events, setSelectedStatus]);
 
@@ -167,12 +173,12 @@ export default function EventsMap() {
 
     async function handleEdit(e) {
         e.preventDefault();
+        setLoading(true);
         if (!selectedEvent) return;
         const newFormData = createFormData(formData);
         newFormData.append('_method', 'PATCH');
         await axios.post(`/events/${selectedEvent.id}`, newFormData).then((res) => {
             setEvents(events.map(e => e.id === selectedEvent.id ? res.data.data : e));
-            console.log(res.data.data);
             setSelectedEvent(res.data.data);
             setSidebarMode('view');
         }).catch((err) => {
@@ -187,6 +193,7 @@ export default function EventsMap() {
     }
 
     async function handleCancel(eventId) {
+        setLoading(true);
         if (!eventId) return;
         if (!window.confirm('Ви впевнені, що хочете скасувати цю подію?')) return;
         await axios.post(`/events/${eventId}/cancel`).then((res) => {
@@ -245,38 +252,42 @@ export default function EventsMap() {
                         )}
                         {sidebarMode && sidebarMode === 'view' && (
                             <>
-                                {error && error.global && <div className="error">{error.global}</div>}
-                                {selectedEvent.can_edit && (
-                                    <div className='event-edit-links'>
-                                        <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
-                                        {selectedEvent?.status !== 'canceled' && selectedEvent?.status !== 'finished' && (
-                                            <button onClick={() => handleCancel(selectedEvent.id)} className='event-cancel-button'>Скасувати подію</button>
-                                        )}
-                                        <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
-                                    </div>
-                                )}
-                                <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} />
-                                {selectedEvent.preview_image && (
-                                    <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
-                                )}
-                                <h1>{selectedEvent.title}</h1>
-                                <div className='event-time-creator'>
-                                    <Link to={`/profile/${selectedEvent.creator.id}`} className='event-creator'>
-                                        {`created by ${selectedEvent.creator.name}`}
-                                    </Link>
-                                    <div className='event-time'>
-                                        <p>{"Початок: " + new Date(selectedEvent.start_time).toLocaleString()}</p>
-                                        {selectedEvent.end_time && (
-                                            <p>{"Кінець: " + new Date(selectedEvent.end_time).toLocaleString()}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <p className='event-sidebar-label'>Локація:</p>
-                                <p>{selectedEvent.location}</p>
-                                {selectedEvent.description && (
+                                {loading ? (<p>Loading...</p>) : (
                                     <>
-                                        <p className='event-sidebar-label'>Опис події:</p>
-                                        <p>{selectedEvent.description}</p>
+                                        {error && error.global && <div className="error">{error.global}</div>}
+                                        {selectedEvent.can_edit && (
+                                            <div className='event-edit-links'>
+                                                <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
+                                                {selectedEvent?.status !== 'canceled' && selectedEvent?.status !== 'finished' && (
+                                                    <button onClick={() => handleCancel(selectedEvent.id)} className='event-cancel-button'>Скасувати подію</button>
+                                                )}
+                                                <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
+                                            </div>
+                                        )}
+                                        <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} />
+                                        {selectedEvent.preview_image && (
+                                            <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
+                                        )}
+                                        <h1>{selectedEvent.title}</h1>
+                                        <div className='event-time-creator'>
+                                            <Link to={`/profile/${selectedEvent.creator.id}`} className='event-creator'>
+                                                {`created by ${selectedEvent.creator.name}`}
+                                            </Link>
+                                            <div className='event-time'>
+                                                <p>{"Початок: " + new Date(selectedEvent.start_time).toLocaleString()}</p>
+                                                {selectedEvent.end_time && (
+                                                    <p>{"Кінець: " + new Date(selectedEvent.end_time).toLocaleString()}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <p className='event-sidebar-label'>Локація:</p>
+                                        <p>{selectedEvent.location}</p>
+                                        {selectedEvent.description && (
+                                            <>
+                                                <p className='event-sidebar-label'>Опис події:</p>
+                                                <p>{selectedEvent.description}</p>
+                                            </>
+                                        )}
                                     </>
                                 )}
                             </>
