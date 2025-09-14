@@ -16,7 +16,7 @@ class EventController extends Controller
      */
     public function index(): JsonResponse
     {
-        $events = Event::with('creator')->get();
+        $events = Event::with(['creator', 'categories'])->get();
 
         if (request()->filled('status') && request('status') !== 'all') {
             $events = $events->filter(function ($event) {
@@ -62,9 +62,10 @@ class EventController extends Controller
         }
 
         $event = $user->events()->create($data);
+        $event->categories()->attach($data['categories']);
 
         return response()->json([
-            'data' => new EventResource($event->load('creator')),
+            'data' => new EventResource($event->load(['creator', 'categories'])),
         ], 201);
     }
 
@@ -94,9 +95,10 @@ class EventController extends Controller
         }
 
         $event->update($data);
+        $event->categories()->sync($data['categories']);
 
         return response()->json([
-            'data' => new EventResource($event->load('creator')),
+            'data' => new EventResource($event->load(['creator', 'categories'])),
         ], 200);
     }
 

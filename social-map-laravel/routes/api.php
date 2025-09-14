@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CategoryController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('/user', 'user')->middleware('auth:sanctum');
@@ -26,3 +27,5 @@ Route::controller(EventController::class)->group(function () {
     Route::delete('events/{event}', 'destroy')->middleware(['auth:sanctum', 'can:delete,event']);
     Route::post('events/{event}/cancel', 'cancel')->middleware(['auth:sanctum', 'can:update,event']);
 });
+
+Route::get('/categories', [CategoryController::class, 'index']);

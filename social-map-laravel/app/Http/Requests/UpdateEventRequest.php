@@ -28,6 +28,8 @@ class UpdateEventRequest extends FormRequest
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'description' => 'nullable|string',
+            'categories' => 'nullable|array|max:2',
+            'categories.*' => 'integer|exists:categories,id',
             'start_time' => 'required|date|after_or_equal:today',
             'end_time' => 'required|date|after_or_equal:start_time',
         ];

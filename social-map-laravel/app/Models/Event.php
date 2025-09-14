@@ -49,4 +49,9 @@ class Event extends Model
         }
         return self::STATUS_FINISHED;
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }
