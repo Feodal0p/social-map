@@ -16,8 +16,16 @@ class EventController extends Controller
      */
     public function index(): JsonResponse
     {
+        $events = Event::with('creator')->get();
+
+        if (request()->filled('status') && request('status') !== 'all') {
+            $events = $events->filter(function ($event) {
+                return $event->status === request('status');
+            });
+        }
+
         return response()->json([
-            'data' => EventResource::collection(Event::with('creator')->get()),
+            'data' => EventResource::collection($events),
         ]);
     }
 
