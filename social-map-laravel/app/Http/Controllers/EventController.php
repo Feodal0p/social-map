@@ -20,8 +20,16 @@ class EventController extends Controller
         $events = Event::with('categories')->get();
 
         if (request()->filled('status') && request('status') !== 'all') {
-            $events = $events->filter(function ($event) {
-                return $event->status === request('status');
+            $statuses = explode(',', request('status'));
+            $events = $events->filter(function ($event) use ($statuses) {
+                return in_array($event->status, $statuses);
+            });
+        }
+
+        if (request()->filled('categories') && request('categories') !== 'all') {
+            $categories = explode(',', request('categories'));
+            $events = $events->filter(function ($event) use ($categories) {
+                return array_intersect($event->categories->pluck('name')->toArray(), $categories);
             });
         }
 
@@ -45,6 +53,18 @@ class EventController extends Controller
         return response()->json([
             'data' => new EventSmallResource($event),
         ], 200);
+    }
+
+    public function statuses(): JsonResponse
+    {
+        return response()->json([
+            'statuses' => [
+                Event::STATUS_ACTIVE,
+                Event::STATUS_UPCOMING,
+                Event::STATUS_FINISHED,
+                Event::STATUS_CANCELED,
+            ]
+        ]);
     }
 
     /**

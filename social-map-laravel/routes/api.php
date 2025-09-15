@@ -21,6 +21,7 @@ Route::controller(ProfileController::class)->group(function () {
 Route::controller(EventController::class)->group(function () {
     Route::get('events', 'index');
     Route::get('events/latest', 'latest');
+    Route::get('events/statuses', 'statuses');
     Route::get('events/{event}', 'show');
     Route::post('events', 'store')->middleware(['auth:sanctum', 'can:create,App\Models\Event']);
     Route::patch('events/{event}', 'update')->middleware(['auth:sanctum', 'can:update,event']);
