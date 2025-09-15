@@ -1,18 +1,14 @@
 import { useContext } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { AppContext } from "../../Context/AppContext"
 
 export default function Header() {
 
-    const { user, selectedStatus, setSelectedStatus, localLoading } = useContext(AppContext)
+    const { user, setFilterOpen} = useContext(AppContext)
     
-    const navigate = useNavigate();
 
-    function handleStatusChange(e) {
-        setSelectedStatus(e.target.value);
-        const params = new URLSearchParams(location.search);
-        params.set('status', e.target.value);
-        navigate({ search: params.toString() });
+    function handleFilterOpen() {
+        setFilterOpen(true);
     }
 
     return (
@@ -23,19 +19,9 @@ export default function Header() {
                         <span>LOGO</span>
                         <span>Social Map</span>
                     </Link>
-                    {localLoading ? (<span className="status-select">Loading...</span>) : (
-                        <select
-                        value={selectedStatus}
-                        onChange={handleStatusChange}
-                        className="status-select"
-                    >
-                        <option value="all">Всі події</option>
-                        <option value="upcoming">Найближчі події</option>
-                        <option value="active">Активні події</option>
-                        <option value="finished">Завершені події</option>
-                        <option value="canceled">Скасовані події</option>
-                    </select>
-                    )}
+                    <button className='button-filter' onClick={handleFilterOpen}>
+                        Фільтри подій
+                    </button>
                 </div>
                 {user ? (
                     <div className="nav-right">

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function Map({ events = [], roles = [],
-    createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, setShowSidebar, onSelectEvent }) {
+    createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, sidebarMode, onSelectEvent, handleSidebarClose }) {
 
     const mapRef = useRef();
 
@@ -60,8 +60,7 @@ export default function Map({ events = [], roles = [],
         function handleMapClick(e) {
             const allowedRoles = ['admin', 'organizer'];
             if (createEventCoords || showSidebar) {
-                setCreateEventCoords(null);
-                setShowSidebar(false);
+                handleSidebarClose();
                 setTempMarker(null);
                 setEventAddress('');
                 clearEventParam();
@@ -75,7 +74,7 @@ export default function Map({ events = [], roles = [],
         
         mapRef.current.on('click', handleMapClick);
 
-    }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, setShowSidebar, showSidebar, navigate]);
+    }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, navigate, handleSidebarClose]);
 
     useEffect(() => {
         const getInfoForCreatedEvent = async () => {
@@ -104,19 +103,21 @@ export default function Map({ events = [], roles = [],
             }
             const marker = L.marker([tempMarker.lat, tempMarker.lng]).addTo(mapRef.current);
             mapRef.current._tempMarker = marker;
-            if (showSidebar) {
+            if (showSidebar && sidebarMode === 'create') {
                 mapRef.current.setView([tempMarker.lat, tempMarker.lng - 0.0025], 17);
-            }
+            } 
         } else if (mapRef.current && mapRef.current._tempMarker) {
             mapRef.current._tempMarker.remove();
         }
-    }, [tempMarker, showSidebar]);
+    }, [tempMarker, showSidebar, sidebarMode]);
 
     useEffect(() => {
         if (!showSidebar && mapRef.current && mapRef.current._tempMarker) {
             setTempMarker(null);
+        } else if (showSidebar && sidebarMode !== 'create') {
+            setTempMarker(null);
         }
-    }, [showSidebar]);
+    }, [showSidebar , sidebarMode]);
 
     return (
         <div

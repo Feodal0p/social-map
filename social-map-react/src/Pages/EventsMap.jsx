@@ -1,6 +1,7 @@
-import Map from '@components/Map.jsx';
-import EventForm from '@components/EventForm.jsx';
-import EventInfo from '@components/EventInfo.jsx';
+import Map from '@components/EventsMap/Map.jsx';
+import EventForm from '@components/EventsMap/EventForm.jsx';
+import EventInfo from '@components/EventsMap/EventInfo.jsx';
+import EventFilters from '@components/EventsMap/EventFilters.jsx';
 import axios from '@plugin/axios';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
@@ -8,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function EventsMap() {
 
-    const { user, selectedStatus, setSelectedStatus, setLocalLoading } = useContext(AppContext)
+    const { user, filterOpen, setFilterOpen } = useContext(AppContext)
 
     const navigate = useNavigate();
 
@@ -34,19 +35,70 @@ export default function EventsMap() {
 
     const [selectedEvent, setSelectedEvent] = useState(null);
 
+    const [selectedStatus, setSelectedStatus] = useState([null]);
+    const [selectedCategories, setSelectedCategories] = useState([null]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
 
     useEffect(() => {
-        setLocalLoading(true);
+        const params = new URLSearchParams(window.location.search);
+        const statusParam = params.get('status');
+        const categoryParam = params.get('categories');
+        if (!statusParam) {
+            setSelectedStatus(['upcoming']);
+        } else if (statusParam === 'all') {
+            setSelectedStatus([]);
+        } else {
+            setSelectedStatus(statusParam.split(','));
+        }
+
+        if (!categoryParam) {
+            setSelectedCategories([]);
+        } 
+        else if (categoryParam === 'all') {
+            setSelectedCategories([]);
+        } 
+        else {
+            setSelectedCategories(categoryParam.split(','));
+        }
+    }, []);
+
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (selectedStatus) {
+            if (selectedStatus.length === 0 || selectedStatus.length === 4) {
+                params.set('status', 'all');
+            } else {
+                params.set('status', selectedStatus);
+            }
+        }
+        if (selectedCategories) {
+            if (selectedCategories.length === 0 || selectedCategories.length === 10) {
+                params.set('categories', 'all');
+            } else {
+                params.set('categories', selectedCategories);
+            }
+        }
+        navigate({ search: params.toString() });
+    }, [selectedStatus, selectedCategories, navigate]);
+
+    useEffect(() => {
+        if (selectedStatus[0] === null || selectedCategories[0] === null) { return; }
+        setLoading(true);
+        const statusParam = (selectedStatus.length !== 0 && selectedStatus.length !== 4)
+            ? selectedStatus.join(',') : 'all';
+        const categoryParam = (selectedCategories.length !== 0 && selectedCategories.length !== 10)
+            ? selectedCategories.join(',') : 'all';
         const getEvents = async () => {
-            await axios.get(`/events?status=${selectedStatus}`).then((res) => {
+            await axios.get(`/events?status=${statusParam}&categories=${categoryParam}`).then((res) => {
                 setEvents(res.data.data);
-            }).finally(() => setLocalLoading(false));
+            }).finally(() => setLoading(false));
         }
         getEvents();
 
-    }, [selectedStatus, setLocalLoading]);
+    }, [selectedStatus, selectedCategories]);
 
     const createFormData = (oldFormData) => {
         return Object.keys(oldFormData).reduce((newFormData, key) => {
@@ -99,16 +151,15 @@ export default function EventsMap() {
     }
 
     useEffect(() => {
+        setLoading(true);
         const params = new URLSearchParams(window.location.search);
         const eventId = params.get('event');
-        const status = params.get('status');
-        if (status) setSelectedStatus(status);
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
             if (!event) return;
             getEvent(event.id);
         }
-    }, [events, setSelectedStatus]);
+    }, [events]);
 
     async function handleDelete() {
         if (!selectedEvent) return;
@@ -211,6 +262,23 @@ export default function EventsMap() {
         });
     }
 
+    function handleSidebarClose() {
+        const params = new URLSearchParams(location.search);
+        params.delete('event');
+        navigate({ search: params.toString() }, { replace: true });
+        setShowSidebar(false);
+        setCreateEventCoords(null);
+        setFilterOpen(false);
+    }
+
+    useEffect(() => {
+        if (filterOpen) {
+            setShowSidebar(true);
+            setSidebarMode('filters');
+            setCreateEventCoords(null);
+        }
+    }, [filterOpen]);
+
     return (
         <>
             <Map
@@ -219,8 +287,10 @@ export default function EventsMap() {
                 setCreateEventCoords={setCreateEventCoords}
                 setEventAddress={setEventAddress}
                 showSidebar={showSidebar}
+                sidebarMode={sidebarMode}
                 setShowSidebar={setShowSidebar}
                 onSelectEvent={handleSelectEvent}
+                handleSidebarClose={handleSidebarClose}
             />
             {createEventCoords && !showSidebar && (
                 <div className="create-event-popup">
@@ -236,13 +306,13 @@ export default function EventsMap() {
                             <span>LOGO</span>
                             <span>Social Map</span>
                         </div>
-                        <button onClick={() => { setShowSidebar(false); setCreateEventCoords(null); navigate('', { replace: true }); }}>X</button>
+                        <button onClick={() => {
+                            handleSidebarClose();
+                        }}>X</button>
                     </div>
                     <div className="event-sidebar-content">
                         {sidebarMode && sidebarMode === 'create' && (
                             <>
-                                <h1>Create Event</h1>
-                                {error && error.global && <div className="error">{error.global}</div>}
                                 <EventForm formData={formData}
                                     setFormData={setFormData}
                                     error={error}
@@ -295,12 +365,20 @@ export default function EventsMap() {
                         {sidebarMode && sidebarMode === 'edit' && (
                             <>
                                 <button onClick={() => setSidebarMode('view')} className='event-back-button'>Назад</button>
-                                <h1>Edit Event</h1>
-                                {error && error.global && <div className="error">{error.global}</div>}
                                 <EventForm formData={formData}
                                     setFormData={setFormData}
                                     error={error}
                                     onSubmit={handleEdit} />
+                            </>
+                        )}
+                        {sidebarMode && sidebarMode === 'filters' && (
+                            <>
+                                <EventFilters
+                                    selectedStatus={selectedStatus}
+                                    setSelectedStatus={setSelectedStatus}
+                                    selectedCategories={selectedCategories}
+                                    setSelectedCategories={setSelectedCategories}
+                                />
                             </>
                         )}
                     </div>

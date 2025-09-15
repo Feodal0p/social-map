@@ -48,7 +48,7 @@ nav {
     @apply bg-orange-200/70 hover:bg-orange-300;
 }
 
-.status-select {
+.button-filter {
     @apply px-4 py-1 bg-orange-200/70 hover:bg-orange-300 rounded-2xl items-center;
 }
 
@@ -237,11 +237,11 @@ h1 {
 }
 
 .event-form-create input {
-    @apply p-2 border rounded-2xl;
+    @apply p-2 border outline-0 rounded-sm focus:outline-2 transition-all duration-25;  
 }
 
 .event-form-create textarea {
-    @apply border p-2 rounded-2xl resize-none;
+    @apply border p-2 rounded-sm outline-0 resize-none focus:outline-2 transition-all duration-25;
 }
 
 .event-form-create button {
@@ -306,4 +306,12 @@ h1 {
 
 .event-preview-image {
     @apply w-full h-64 my-4 rounded-lg object-cover;
+}
+
+.react-select__control {
+    @apply p-1;
+}
+
+.event-sidebar-content p {
+    @apply mt-4;
 }

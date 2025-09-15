@@ -9,8 +9,7 @@ export default function AppProvider({ children }) {
     const { user: initialUser, loading: initialLoading } = useAuth();
     const [user, setUser] = useState(initialUser);
     const [loading, setLoading] = useState(initialLoading);
-    const [selectedStatus, setSelectedStatus] = useState('upcoming');
-    const [localLoading, setLocalLoading] = useState(false);
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const refreshUser = async () => {
         const res = await axios.get('/user');
@@ -30,8 +29,7 @@ export default function AppProvider({ children }) {
     return (
         <AppContext.Provider value={{
             user, loading, refreshUser, logout,
-            selectedStatus, setSelectedStatus,
-            localLoading, setLocalLoading
+            filterOpen, setFilterOpen
         }}>
             {children}
         </AppContext.Provider>

@@ -10,12 +10,16 @@ export default function EventForm({ formData, setFormData, error, onSubmit, mode
     useEffect(() => {
         axios.get('/categories')
             .then(response => {
-                setCategories(response.data)
+                setCategories(response.data.categories)
             })
     }, [])
 
     return (
         <form className='event-form-create' onSubmit={onSubmit}>
+            <h1>
+                {mode === 'create' ? 'Create Event' : 'Update Event'}
+            </h1>
+            {error && error.global && <div className="error">{error.global}</div>}
             {formData.preview_image && (
                 typeof formData.preview_image === 'string'
                     ? <img src={formData.preview_image} alt="Event Preview" className='event-preview-image' />
@@ -38,7 +42,6 @@ export default function EventForm({ formData, setFormData, error, onSubmit, mode
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}></textarea>
             <label htmlFor="categories">Categories (max 2)</label>
             <Select
-                className="event-form-select"
                 isMulti
                 options={categories.map(category => ({ value: category.id, label: category.name }))}
                 value={formData.categories.map(category => ({ value: category.id, label: category.name }))}
@@ -50,6 +53,13 @@ export default function EventForm({ formData, setFormData, error, onSubmit, mode
                 placeholder="Select categories"
                 isClearable={false}
                 closeMenuOnSelect={false}
+                className='react-select-container'
+                classNamePrefix="react-select"
+                styles={{ control: (base, state) => ({ ...base,
+                    '&:hover': { borderColor: 'black' },
+                    borderColor: state.isFocused ? 'black' : 'black',
+                    boxShadow: state.isFocused ? 'black 0 0 0 1px' : 'none',
+                 }) }}
             />
             {error && error.categories && <div className="error">{error.categories[0]}</div>}
             <label htmlFor="date-start">Date & Time start</label>
