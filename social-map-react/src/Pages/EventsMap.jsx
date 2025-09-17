@@ -55,10 +55,10 @@ export default function EventsMap() {
 
         if (!categoryParam) {
             setSelectedCategories([]);
-        } 
+        }
         else if (categoryParam === 'all') {
             setSelectedCategories([]);
-        } 
+        }
         else {
             setSelectedCategories(categoryParam.split(','));
         }
@@ -279,6 +279,20 @@ export default function EventsMap() {
         }
     }, [filterOpen]);
 
+    function handleJoinEvent() {
+        if (!selectedEvent.permissions.can_join) {
+            if (!window.confirm('Ви впевнені, що хочете покинути подію?')) return;
+        };
+        axios.post(`/events/${selectedEvent.id}/join`).then((res) => {
+            setSelectedEvent(prev => ({
+                ...prev,
+                permissions: {
+                    ...prev.permissions,
+                    can_join: res.data.can_join
+                }
+            }));
+        });
+    }
     return (
         <>
             <Map
@@ -325,7 +339,7 @@ export default function EventsMap() {
                                 {loading ? (<p>Loading...</p>) : (
                                     <>
                                         {error && error.global && <div className="error">{error.global}</div>}
-                                        {selectedEvent.can_edit && (
+                                        {selectedEvent.permissions.can_edit && (
                                             <div className='event-edit-links'>
                                                 <button onClick={() => setSidebarMode('edit')} className='event-edit-button'>Редагувати</button>
                                                 {selectedEvent?.status !== 'canceled' && selectedEvent?.status !== 'finished' && (
@@ -358,6 +372,30 @@ export default function EventsMap() {
                                                 <p>{selectedEvent.description}</p>
                                             </>
                                         )}
+                                        <div className='event-join'>
+                                            {selectedEvent.status === 'finished' || selectedEvent.status === 'canceled' ? (
+                                                <>
+                                                <p>Ця подія вже завершена або скасована</p>
+                                                {!selectedEvent.permissions.can_join && !selectedEvent.permissions.check_creator && (
+                                                    <p>Ви були учасником цієї події</p>
+                                                )}
+                                                {selectedEvent.permissions.check_creator && (
+                                                    <p>Ви були організатором цієї події</p>
+                                                )}
+                                                </>  
+                                            ) : (!user ? (
+                                                <p>Щоб брати участь у події, будь ласка, <Link to="/login">увійдіть</Link> або <Link to="/register">зареєструйтесь</Link>.</p>
+                                            ) : (selectedEvent.permissions.check_creator ? (
+                                                <p>Ви є організатором цієї події, тому уже берете участь</p>
+                                            ) : (selectedEvent.permissions.can_join ? (
+                                                <button className='event-join-button' onClick={handleJoinEvent}>Взяти участь у події</button>
+                                            ) : (
+                                                <>
+                                                    <p>Ви вже є учасником цієї події</p>
+                                                    <button className='event-unjoin-button' onClick={handleJoinEvent}>Вийти з події</button>
+                                                </>
+                                            ))))}
+                                        </div>
                                     </>
                                 )}
                             </>

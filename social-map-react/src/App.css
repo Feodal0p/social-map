@@ -245,7 +245,7 @@ h1 {
 }
 
 .event-form-create button {
-    @apply bg-green-600 hover:bg-green-700 rounded-xl py-2 mt-4 font-bold;
+    @apply bg-green-600 hover:bg-green-700 rounded-xl py-2 mt-4 font-bold text-white;
 }
 
 .event-form-create .error {
@@ -310,4 +310,28 @@ h1 {
 
 .react-select__control {
     @apply p-1;
+}
+
+.event-join {
+    @apply mt-4 border-t pt-4 items-center text-center;
+}
+
+.event-join a {
+    @apply text-blue-600 text-base hover:text-blue-800 hover:bg-transparent underline;
+}
+
+.event-join button {
+    @apply rounded-xl p-2 font-bold text-white;
+}
+
+.event-unjoin-button {
+    @apply bg-red-600 hover:bg-red-700 my-2;
+}
+
+.event-join-button {
+    @apply bg-green-600 hover:bg-green-700;
+}
+
+.event-join p {
+    @apply font-bold;
 }
