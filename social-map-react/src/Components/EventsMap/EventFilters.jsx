@@ -18,7 +18,7 @@ export default function EventFilters({ selectedStatus, setSelectedStatus, select
     return (
         <>
             <h1>Filters</h1>
-            <p>Status</p>
+            <label htmlFor="status-select">Status</label>
             <Select
                 isMulti
                 options={statuses.map(status => ({ value: status, label: status }))}
@@ -40,7 +40,7 @@ export default function EventFilters({ selectedStatus, setSelectedStatus, select
                     })
                 }}
             />
-            <p>Categories</p>
+            <label htmlFor="category-select">Categories</label>
             <Select
                 isMulti
                 options={categories.map(category => ({ value: category.name, label: category.name }))}

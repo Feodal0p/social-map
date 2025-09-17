@@ -311,7 +311,3 @@ h1 {
 .react-select__control {
     @apply p-1;
 }
-
-.event-sidebar-content p {
-    @apply mt-4;
-}
