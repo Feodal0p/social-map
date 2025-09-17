@@ -21,4 +21,21 @@ class EventPolicy
     {
         return $user->id === $event->user_id;
     }
+
+    public function join(User $user, Event $event): bool
+    {
+        if ($user->id === $event->user_id) {
+            return false;
+        }
+
+        if ($event->participants()->where('user_id', $user->id)->exists()) {
+            return false;
+        }
+
+        if ($event->status === 'canceled' || $event->status === 'finished') {
+            return false;
+        }
+
+        return true;
+    }
 }

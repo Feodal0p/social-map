@@ -67,6 +67,22 @@ class EventController extends Controller
         ]);
     }
 
+    public function join(Event $event): JsonResponse
+    {
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+
+        if ($user->can('join', $event)) {
+            $event->participants()->attach($user->id);
+        } else {
+            $event->participants()->detach($user->id);
+        }
+
+        return response()->json([
+            'can_join' => $user->can('join', $event),
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -84,6 +100,7 @@ class EventController extends Controller
 
         $event = $user->events()->create($data);
         $event->categories()->attach($data['categories']);
+        $event->participants()->attach($user->id);
 
         return response()->json([
             'data' => new EventSmallResource($event),

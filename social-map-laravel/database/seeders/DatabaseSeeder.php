@@ -78,6 +78,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $event1->categories()->sync([1, 2]);
+        $event1->participants()->sync([$user1->id, $user2->id]);
 
         $event2 = Event::firstOrCreate(
             ['title' => 'Test Event #2'],
@@ -94,6 +95,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $event2->categories()->sync([1, 6]);
+        $event2->participants()->sync([$user1->id, $user2->id]);
 
         $event3 = Event::firstOrCreate(
             ['title' => 'Test Event #3'],
@@ -110,5 +112,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $event3->categories()->sync(9);
+        $event3->participants()->sync([$user1->id, $user2->id]);
     }
 }

@@ -28,7 +28,11 @@ class EventResource extends JsonResource
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
             'creator' => new UserResource($this->whenLoaded('creator')),
             'created_at' => $this->created_at,
-            'can_edit' => $request->user() ? $request->user()->can('update', $this->resource) : false,
+            'permissions' => [
+                'can_edit' => $request->user() && $request->user()->can('update', $this->resource),
+                'check_creator' => $request->user() && $request->user()->id === $this->user_id,
+                'can_join' => $request->user() && $request->user()->can('join', $this->resource),
+            ],
         ];
     }
 }
