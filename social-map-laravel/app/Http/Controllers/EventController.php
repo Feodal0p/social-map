@@ -8,6 +8,7 @@ use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\EventSmallResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
@@ -81,6 +82,17 @@ class EventController extends Controller
         return response()->json([
             'can_join' => $user->can('join', $event),
             'participants_count' => $event->participants()->count(),
+        ], 200);
+    }
+
+    public function participants(Event $event): JsonResponse
+    {
+        $creator = $event->creator;
+        $participants = $event->participants()->where('user_id', '!=', $creator->id)->get();
+
+        return response()->json([
+            'participants' => UserResource::collection($participants->load('profile')),
+            'creator' => new UserResource($creator->load('profile')),
         ], 200);
     }
 
