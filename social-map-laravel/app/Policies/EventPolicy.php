@@ -32,10 +32,6 @@ class EventPolicy
             return false;
         }
 
-        if ($event->status === 'canceled' || $event->status === 'finished') {
-            return false;
-        }
-
         return true;
     }
 }
