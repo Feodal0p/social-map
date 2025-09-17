@@ -321,11 +321,11 @@ h1 {
 }
 
 .event-join button {
-    @apply rounded-xl p-2 font-bold text-white;
+    @apply rounded-xl p-2 font-bold text-white my-2;
 }
 
 .event-unjoin-button {
-    @apply bg-red-600 hover:bg-red-700 my-2;
+    @apply bg-red-600 hover:bg-red-700;
 }
 
 .event-join-button {

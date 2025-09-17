@@ -286,6 +286,7 @@ export default function EventsMap() {
         axios.post(`/events/${selectedEvent.id}/join`).then((res) => {
             setSelectedEvent(prev => ({
                 ...prev,
+                participants_count: res.data.participants_count,
                 permissions: {
                     ...prev.permissions,
                     can_join: res.data.can_join
@@ -373,9 +374,11 @@ export default function EventsMap() {
                                             </>
                                         )}
                                         <div className='event-join'>
+                                            <p>Кількість учасників: {selectedEvent.participants_count}</p>
                                             {selectedEvent.status === 'finished' || selectedEvent.status === 'canceled' ? (
                                                 <>
                                                 <p>Ця подія вже завершена або скасована</p>
+                                                {console.log(selectedEvent.permissions)}
                                                 {!selectedEvent.permissions.can_join && !selectedEvent.permissions.check_creator && (
                                                     <p>Ви були учасником цієї події</p>
                                                 )}
