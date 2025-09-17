@@ -80,6 +80,7 @@ class EventController extends Controller
 
         return response()->json([
             'can_join' => $user->can('join', $event),
+            'participants_count' => $event->participants()->count(),
         ], 200);
     }
 
