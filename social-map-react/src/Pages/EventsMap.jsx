@@ -2,6 +2,7 @@ import Map from '@components/EventsMap/Map.jsx';
 import EventForm from '@components/EventsMap/EventForm.jsx';
 import EventInfo from '@components/EventsMap/EventInfo.jsx';
 import EventFilters from '@components/EventsMap/EventFilters.jsx';
+import EventParticipants from '@components/EventsMap/EventParticipants.jsx';
 import axios from '@plugin/axios';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
@@ -37,6 +38,8 @@ export default function EventsMap() {
 
     const [selectedStatus, setSelectedStatus] = useState([null]);
     const [selectedCategories, setSelectedCategories] = useState([null]);
+
+    const [participants, setParticipants] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
@@ -134,8 +137,8 @@ export default function EventsMap() {
         });
     }
 
-    function getEvent(id) {
-        axios.get(`/events/${id}`).then((res) => {
+    async function getEvent(id) {
+        await axios.get(`/events/${id}`).then((res) => {
             setSelectedEvent(res.data.data);
         }).finally(() => setLoading(false));
         setSidebarMode('view');
@@ -146,6 +149,7 @@ export default function EventsMap() {
         setLoading(true);
         const params = new URLSearchParams(location.search);
         params.set('event', event.id);
+        params.delete('sidebar');
         navigate({ search: params.toString() });
         getEvent(event.id);
     }
@@ -154,10 +158,14 @@ export default function EventsMap() {
         setLoading(true);
         const params = new URLSearchParams(window.location.search);
         const eventId = params.get('event');
+        const sidebarParam = params.get('sidebar');
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
             if (!event) return;
             getEvent(event.id);
+            if (sidebarParam) {
+                getParticipants(event.id);
+            }
         }
     }, [events]);
 
@@ -265,6 +273,7 @@ export default function EventsMap() {
     function handleSidebarClose() {
         const params = new URLSearchParams(location.search);
         params.delete('event');
+        params.delete('sidebar');
         navigate({ search: params.toString() }, { replace: true });
         setShowSidebar(false);
         setCreateEventCoords(null);
@@ -279,11 +288,11 @@ export default function EventsMap() {
         }
     }, [filterOpen]);
 
-    function handleJoinEvent() {
+    async function handleJoinEvent() {
         if (!selectedEvent.permissions.can_join) {
             if (!window.confirm('Ви впевнені, що хочете покинути подію?')) return;
         };
-        axios.post(`/events/${selectedEvent.id}/join`).then((res) => {
+        await axios.post(`/events/${selectedEvent.id}/join`).then((res) => {
             setSelectedEvent(prev => ({
                 ...prev,
                 participants_count: res.data.participants_count,
@@ -294,6 +303,23 @@ export default function EventsMap() {
             }));
         });
     }
+
+    async function getParticipants(id) {
+        await axios.get(`/events/${id}/participants`).then((res) => {
+            setParticipants(res.data);
+        }).finally(() => setLoading(false));
+        setSidebarMode('participants');
+        setShowSidebar(true);
+    }
+
+    function handleParticipantsClick() {
+        setLoading(true);
+        const params = new URLSearchParams(location.search);
+        params.set('sidebar', 'participants');
+        navigate({ search: params.toString() });
+        getParticipants(selectedEvent.id);
+    }
+
     return (
         <>
             <Map
@@ -375,17 +401,17 @@ export default function EventsMap() {
                                         )}
                                         <div className='event-join'>
                                             <p>Кількість учасників: {selectedEvent.participants_count}</p>
+                                            <button className='event-participants-button' onClick={handleParticipantsClick}>Переглянути список учасників</button>
                                             {selectedEvent.status === 'finished' || selectedEvent.status === 'canceled' ? (
                                                 <>
-                                                <p>Ця подія вже завершена або скасована</p>
-                                                {console.log(selectedEvent.permissions)}
-                                                {!selectedEvent.permissions.can_join && !selectedEvent.permissions.check_creator && (
-                                                    <p>Ви були учасником цієї події</p>
-                                                )}
-                                                {selectedEvent.permissions.check_creator && (
-                                                    <p>Ви були організатором цієї події</p>
-                                                )}
-                                                </>  
+                                                    <p>Ця подія вже завершена або скасована</p>
+                                                    {!selectedEvent.permissions.can_join && !selectedEvent.permissions.check_creator && (
+                                                        <p>Ви були учасником цієї події</p>
+                                                    )}
+                                                    {selectedEvent.permissions.check_creator && (
+                                                        <p>Ви були організатором цієї події</p>
+                                                    )}
+                                                </>
                                             ) : (!user ? (
                                                 <p>Щоб брати участь у події, будь ласка, <Link to="/login">увійдіть</Link> або <Link to="/register">зареєструйтесь</Link>.</p>
                                             ) : (selectedEvent.permissions.check_creator ? (
@@ -420,6 +446,18 @@ export default function EventsMap() {
                                     selectedCategories={selectedCategories}
                                     setSelectedCategories={setSelectedCategories}
                                 />
+                            </>
+                        )}
+                        {sidebarMode && sidebarMode === 'participants' && (
+                            <>
+                                {loading ? (<p>Loading...</p>) : (
+                                    <>
+                                        <button onClick={() => setSidebarMode('view')} className='event-back-button'>Назад</button>
+                                        <EventParticipants
+                                            participants={participants}
+                                        />
+                                    </>
+                                )}
                             </>
                         )}
                     </div>
