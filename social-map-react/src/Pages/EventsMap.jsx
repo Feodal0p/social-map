@@ -40,6 +40,10 @@ export default function EventsMap() {
     const [selectedCategories, setSelectedCategories] = useState([null]);
 
     const [participants, setParticipants] = useState([]);
+    const [eventComments, setEventComments] = useState([]);
+    const [newComment, setNewComment] = useState({
+        message: '',
+    });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
@@ -139,8 +143,11 @@ export default function EventsMap() {
 
     async function getEvent(id) {
         await axios.get(`/events/${id}`).then((res) => {
-            setSelectedEvent(res.data.data);
-        }).finally(() => setLoading(false));
+            axios.get(`/event/${id}/comments`).then((commentsRes) => {
+                setSelectedEvent(res.data.data);
+                setEventComments(commentsRes.data.comments);
+            }).finally(() => setLoading(false));
+        });
         setSidebarMode('view');
         setShowSidebar(true);
     }
@@ -320,6 +327,23 @@ export default function EventsMap() {
         getParticipants(selectedEvent.id);
     }
 
+    async function handleCreateComment(e) {
+        e.preventDefault();
+        if (!selectedEvent) return;
+        await axios.post(`/event/${selectedEvent.id}/comments`, newComment).then((res) => {
+            setEventComments([res.data.comment, ...eventComments]);
+            setNewComment({ message: '' });
+        }).catch((err) => {
+            if (err.response?.data?.errors) {
+                setError(err.response.data.errors);
+            } else if (err.response?.data?.message) {
+                setError({ global: err.response.data.message });
+            } else {
+                setError({ global: 'Сталася невідома помилка' });
+            }
+        });
+    }
+
     return (
         <>
             <Map
@@ -424,6 +448,45 @@ export default function EventsMap() {
                                                     <button className='event-unjoin-button' onClick={handleJoinEvent}>Вийти з події</button>
                                                 </>
                                             ))))}
+                                        </div>
+                                        <div>
+                                            {!user || selectedEvent.permissions.can_join ? (
+                                                <p className='event-sidebar-label'>Щоб залишити коментар, потрібно бути учасником події.</p>
+                                            ) : (
+                                                <>
+                                                    <p className='event-sidebar-label'>Залишити коментар:</p>
+                                                    <form className='event-comment-form' onSubmit={handleCreateComment}>
+                                                        <textarea rows={4} placeholder='Ваш коментар...'
+                                                            value={newComment.message}
+                                                            onChange={(e) => setNewComment({ ...newComment, message: e.target.value })} />
+                                                        {error && error.message && <div className="error">{error.message}</div>}
+                                                        <button type='submit' className='event-comment-submit-button'>Відправити</button>
+                                                    </form>
+                                                </>
+                                            )}
+                                            <p className='event-sidebar-label'>Коментарі користувачів:</p>
+                                            {eventComments.length === 0 ? (
+                                                <p>Поки що немає коментарів. Будьте першим, хто залишить коментар!</p>
+                                            ) : (
+                                                <ul className='event-comments-list' lazy="load">
+                                                    {eventComments.map(comment => (
+                                                        <li className='comment-card' key={comment.id}>
+                                                            <Link to={`/profile/${comment.user.profile_id}`} className='comment-avatar'>
+                                                                <img src={comment.user.profile_avatar} alt={comment.user.name} />
+                                                            </Link>
+                                                            <div className='comment-content'>
+                                                                <div className='comment-header'>
+                                                                    <Link to={`/profile/${comment.user.profile_id}`} className='comment-username'>
+                                                                        <p>{comment.user.name}</p>
+                                                                    </Link>
+                                                                    <span className='comment-timestamp'>{new Date(comment.created_at).toLocaleString()}</span>
+                                                                </div>
+                                                                <p className='comment-message'>{comment.message}</p>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </div>
                                     </>
                                 )}
