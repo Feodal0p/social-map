@@ -70,6 +70,11 @@ class EventController extends Controller
 
     public function join(Event $event): JsonResponse
     {
+
+        if (in_array($event->status, [Event::STATUS_FINISHED, Event::STATUS_CANCELED])) {
+            return response()->json(['message' => 'Неможливо приєднатися до завершеної або скасованої події.'], 403);
+        }
+        
         /** @var \App\Models\User */
         $user = auth('sanctum')->user();
 
