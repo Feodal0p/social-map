@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('/user', 'user')->middleware('auth:sanctum');
@@ -32,3 +33,6 @@ Route::controller(EventController::class)->group(function () {
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);
+
+Route::get('{type}/{id}/comments', [CommentController::class, 'index']);
+Route::post('{type}/{id}/comments', [CommentController::class, 'store'])->middleware('auth:sanctum');
