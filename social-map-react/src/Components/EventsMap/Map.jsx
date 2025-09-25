@@ -1,17 +1,25 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function Map({ events = [], roles = [],
-    createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, sidebarMode, onSelectEvent, handleSidebarClose }) {
+    createEventCoords, setCreateEventCoords, setEventAddress,
+    showSidebar, sidebarMode, onSelectEvent, handleSidebarClose, setError, myLocation, setMyLocation,
+    zoomToMyLocation, setZoomToMyLocation
+}) {
 
     const mapRef = useRef();
 
     const [tempMarker, setTempMarker] = useState(null);
 
     const navigate = useNavigate();
+
+    const maxBounds = useMemo(() => L.latLngBounds(
+        [50.69230229359596, 25.19826],
+        [50.82721, 25.442276000976566]
+    ), []);
 
     useEffect(() => {
         if (!mapRef.current) {
@@ -20,7 +28,7 @@ export default function Map({ events = [], roles = [],
                 zoomControl: false,
                 zoom: 13,
                 minZoom: 12,
-                maxBounds: [[50.82721, 25.19826], [50.69230229359596, 25.442276000976566]],
+                maxBounds: maxBounds,
             });
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -28,7 +36,7 @@ export default function Map({ events = [], roles = [],
             }).addTo(mapRef.current);
         }
 
-    }, []);
+    }, [maxBounds]);
 
     useEffect(() => {
         if (mapRef.current) {
@@ -71,7 +79,7 @@ export default function Map({ events = [], roles = [],
                 }
             }
         }
-        
+
         mapRef.current.on('click', handleMapClick);
 
     }, [roles, createEventCoords, setCreateEventCoords, setEventAddress, showSidebar, navigate, handleSidebarClose]);
@@ -105,7 +113,7 @@ export default function Map({ events = [], roles = [],
             mapRef.current._tempMarker = marker;
             if (showSidebar && sidebarMode === 'create') {
                 mapRef.current.setView([tempMarker.lat, tempMarker.lng - 0.0025], 17);
-            } 
+            }
         } else if (mapRef.current && mapRef.current._tempMarker) {
             mapRef.current._tempMarker.remove();
         }
@@ -117,7 +125,46 @@ export default function Map({ events = [], roles = [],
         } else if (showSidebar && sidebarMode !== 'create') {
             setTempMarker(null);
         }
-    }, [showSidebar , sidebarMode]);
+    }, [showSidebar, sidebarMode]);
+
+    function userMarkerCreate(coords) {
+        const userMarker = L.marker([coords[0], coords[1]], {
+            icon: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/64/64113.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+            })
+        }).addTo(mapRef.current).bindPopup('Ваша геолокація');
+        mapRef.current._userMarker = userMarker;
+    }
+
+    useEffect(() => {
+        if (navigator.geolocation && mapRef.current) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const userCoords = [position.coords.latitude, position.coords.longitude];
+                setMyLocation(userCoords);
+                if (maxBounds.contains(userCoords)) {
+                    userMarkerCreate(userCoords);
+                } else {
+                    setError({ geolocation: 'Ваша геолокація поза межами міста' });
+                }
+            }, (error) => {
+                setError({ geolocation: error.message });
+            });
+        }
+    }, [setError, setMyLocation, maxBounds]);
+
+    useEffect(() => {
+        if (zoomToMyLocation && myLocation && mapRef.current) {
+            if (maxBounds.contains(myLocation)) {
+                userMarkerCreate(myLocation);
+                mapRef.current.setView([myLocation[0], myLocation[1], 15]);
+            } else {
+                setError({ geolocation: 'Ваша геолокація поза межами міста' });
+            }
+        }
+        setZoomToMyLocation(false);
+    }, [zoomToMyLocation, myLocation, setError, maxBounds, setZoomToMyLocation]);
 
     return (
         <div

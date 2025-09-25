@@ -48,6 +48,9 @@ export default function EventsMap() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
 
+    const [myLocation, setMyLocation] = useState(null);
+    const [zoomToMyLocation, setZoomToMyLocation] = useState(false);
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const statusParam = params.get('status');
@@ -356,6 +359,11 @@ export default function EventsMap() {
                 setShowSidebar={setShowSidebar}
                 onSelectEvent={handleSelectEvent}
                 handleSidebarClose={handleSidebarClose}
+                setError={setError}
+                myLocation={myLocation}
+                setMyLocation={setMyLocation}
+                zoomToMyLocation={zoomToMyLocation}
+                setZoomToMyLocation={setZoomToMyLocation}
             />
             {createEventCoords && !showSidebar && (
                 <div className="create-event-popup">
@@ -525,6 +533,18 @@ export default function EventsMap() {
                         )}
                     </div>
                 </div>
+            )}
+            {error.geolocation ? (
+                <div className="error-geolocation">
+                    <p>{error.geolocation}</p>
+                    <button onClick={() => setError(prev => ({ ...prev, geolocation: null }))}>Закрити</button>
+                </div>
+            ) : myLocation && (
+                <button onClick={() => {
+                    setZoomToMyLocation(true);
+                }} className='my-location'>
+                    Моя геолокація
+                </button>
             )}
         </>
     );
