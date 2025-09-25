@@ -18,8 +18,17 @@ class EventController extends Controller
      */
     public function index(): JsonResponse
     {
-        $events = Event::with('categories')->get();
-
+        if (request()->filled('coords')) {
+            [$lat, $lng] = explode(',', request('coords'));
+            $events = Event::with('categories')
+                ->selectRaw(
+                    'events.*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
+                    [$lat, $lng, $lat]
+                )->get();
+        } else {
+            $events = Event::with('categories')->get();
+        }
+        
         if (request()->filled('status') && request('status') !== 'all') {
             $statuses = explode(',', request('status'));
             $events = $events->filter(function ($event) use ($statuses) {
@@ -74,7 +83,7 @@ class EventController extends Controller
         if (in_array($event->status, [Event::STATUS_FINISHED, Event::STATUS_CANCELED])) {
             return response()->json(['message' => 'Неможливо приєднатися до завершеної або скасованої події.'], 403);
         }
-        
+
         /** @var \App\Models\User */
         $user = auth('sanctum')->user();
 

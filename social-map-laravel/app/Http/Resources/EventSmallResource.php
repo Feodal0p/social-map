@@ -21,6 +21,7 @@ class EventSmallResource extends JsonResource
             'longitude' => $this->longitude,
             'status' => $this->status,
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+            'distance' => isset($this->distance) ? round($this->distance, 2) : null,
         ];
     }
 }
