@@ -296,6 +296,10 @@ h1 {
     @apply px-4 py-2 mx-2 mb-2 rounded-xl font-semibold text-white;
 }
 
+.event-span-distance {
+    @apply px-4 py-2 mx-2 mb-2 rounded-xl font-semibold text-gray-800 bg-gray-200;
+}
+
 .event-cancel-button {
     @apply bg-rose-500 hover:bg-rose-700 text-white mx-2 p-2 rounded-xl hover:cursor-pointer;
 }

@@ -1,4 +1,4 @@
-export default function EventInfo({ status, categories = [] }) {
+export default function EventInfo({ status, categories = [], distance }) {
 
     const statusColors = {
         "upcoming": "bg-blue-600",
@@ -25,6 +25,7 @@ export default function EventInfo({ status, categories = [] }) {
                 <span className={`event-span ${statusColors[status]}`}>
                     {status}
                 </span>
+                {distance && <span className="event-span bg-gray-600">{`${distance}км`}</span>}
             { categories.map((category) => (
                     <span key={category.id} className={`event-span ${categoryColors[category.name]}`}>
                         {category.name}

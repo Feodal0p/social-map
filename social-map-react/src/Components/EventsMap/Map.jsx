@@ -149,6 +149,7 @@ export default function Map({ events = [], roles = [],
                     setError({ geolocation: 'Ваша геолокація поза межами міста' });
                 }
             }, (error) => {
+                setMyLocation(undefined);
                 setError({ geolocation: error.message });
             });
         }

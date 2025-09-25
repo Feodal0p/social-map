@@ -95,20 +95,26 @@ export default function EventsMap() {
     }, [selectedStatus, selectedCategories, navigate]);
 
     useEffect(() => {
-        if (selectedStatus[0] === null || selectedCategories[0] === null) { return; }
+        if (selectedStatus[0] === null || selectedCategories[0] === null || myLocation === null ) { return; }
         setLoading(true);
         const statusParam = (selectedStatus.length !== 0 && selectedStatus.length !== 4)
             ? selectedStatus.join(',') : 'all';
         const categoryParam = (selectedCategories.length !== 0 && selectedCategories.length !== 10)
             ? selectedCategories.join(',') : 'all';
         const getEvents = async () => {
-            await axios.get(`/events?status=${statusParam}&categories=${categoryParam}`).then((res) => {
+            await axios.get('/events', {
+                params: {
+                    status: statusParam,
+                    categories: categoryParam,
+                    coords: myLocation ? myLocation.join(',') : '',
+                }
+            }).then((res) => {
                 setEvents(res.data.data);
             }).finally(() => setLoading(false));
         }
         getEvents();
 
-    }, [selectedStatus, selectedCategories]);
+    }, [selectedStatus, selectedCategories, myLocation]);
 
     const createFormData = (oldFormData) => {
         return Object.keys(oldFormData).reduce((newFormData, key) => {
@@ -144,10 +150,10 @@ export default function EventsMap() {
         });
     }
 
-    async function getEvent(id) {
+    async function getEvent(id, distance) {
         await axios.get(`/events/${id}`).then((res) => {
             axios.get(`/event/${id}/comments`).then((commentsRes) => {
-                setSelectedEvent(res.data.data);
+                setSelectedEvent({ ...res.data.data, distance });
                 setEventComments(commentsRes.data.comments);
             }).finally(() => setLoading(false));
         });
@@ -161,7 +167,7 @@ export default function EventsMap() {
         params.set('event', event.id);
         params.delete('sidebar');
         navigate({ search: params.toString() });
-        getEvent(event.id);
+        getEvent(event.id, event.distance);
     }
 
     useEffect(() => {
@@ -172,7 +178,7 @@ export default function EventsMap() {
         if (eventId && events.length) {
             const event = events.find(e => e.id === parseInt(eventId));
             if (!event) return;
-            getEvent(event.id);
+            getEvent(event.id, event.distance);
             if (sidebarParam) {
                 getParticipants(event.id);
             }
@@ -407,7 +413,8 @@ export default function EventsMap() {
                                                 <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                             </div>
                                         )}
-                                        <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} />
+                                        <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} 
+                                        distance={selectedEvent.distance} />
                                         {selectedEvent.preview_image && (
                                             <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
                                         )}
