@@ -10,6 +10,7 @@ use App\Http\Resources\EventResource;
 use App\Http\Resources\EventSmallResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 class EventController extends Controller
 {
@@ -28,7 +29,7 @@ class EventController extends Controller
         } else {
             $events = Event::with('categories')->get();
         }
-        
+
         if (request()->filled('status') && request('status') !== 'all') {
             $statuses = explode(',', request('status'));
             $events = $events->filter(function ($event) use ($statuses) {
@@ -47,6 +48,26 @@ class EventController extends Controller
             $radius = (int) request('radius');
             $events = $events->filter(function ($event) use ($radius) {
                 return $event->distance <= $radius;
+            });
+        }
+
+        if (request()->filled('date_from') && request()->filled('date_to')
+            && request('date_from') !== 'all' && request('date_to') !== 'all') {
+            $date_from = request('date_from');
+            $date_to = request('date_to');
+            $events = $events->filter(function ($event) use ($date_from, $date_to) {
+                return Carbon::parse($event->start_time)->toDateString() <= $date_to
+                    && Carbon::parse($event->end_time)->toDateString() >= $date_from;
+            });
+        } elseif (request()->filled('date_from') && request('date_from') !== 'all') {
+            $date_from = request('date_from');
+            $events = $events->filter(function ($event) use ($date_from) {
+                return Carbon::parse($event->end_time)->toDateString() >= $date_from;
+            });
+        } elseif (request()->filled('date_to') && request('date_to') !== 'all') {
+            $date_to = request('date_to');
+            $events = $events->filter(function ($event) use ($date_to) {
+                return Carbon::parse($event->start_time)->toDateString() <= $date_to;
             });
         }
 
