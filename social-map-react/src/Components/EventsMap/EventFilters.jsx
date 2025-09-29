@@ -2,7 +2,8 @@ import Select from 'react-select'
 import axios from '@plugin/axios'
 import { useEffect, useState } from 'react'
 
-export default function EventFilters({ selectedStatus, setSelectedStatus, selectedCategories, setSelectedCategories }) {
+export default function EventFilters({ selectedStatus, setSelectedStatus,
+    selectedCategories, setSelectedCategories, selectedRadius, setSelectedRadius, myLocation }) {
 
     const [statuses, setStatuses] = useState([])
     const [categories, setCategories] = useState([])
@@ -16,10 +17,11 @@ export default function EventFilters({ selectedStatus, setSelectedStatus, select
         })
     }, [])
     return (
-        <>
+        <div className='event-filters'>
             <h1>Filters</h1>
             <label htmlFor="status-select">Status</label>
             <Select
+                inputId='status-select'
                 isMulti
                 options={statuses.map(status => ({ value: status, label: status }))}
                 value={selectedStatus.map(status => ({ value: status, label: status }))}
@@ -42,6 +44,7 @@ export default function EventFilters({ selectedStatus, setSelectedStatus, select
             />
             <label htmlFor="category-select">Categories</label>
             <Select
+                inputId='category-select'
                 isMulti
                 options={categories.map(category => ({ value: category.name, label: category.name }))}
                 value={selectedCategories.map(category => ({ value: category, label: category }))}
@@ -62,6 +65,21 @@ export default function EventFilters({ selectedStatus, setSelectedStatus, select
                     })
                 }}
             />
-        </>
+            {myLocation && (
+                <>
+                    <label htmlFor="radius-range">Radius (km)</label>
+                    <div className="radius-filter">
+                        <input type="range" id="radius-range" className='range-input'
+                            min={0}
+                            max={30}
+                            step={1}
+                            value={selectedRadius || 30}
+                            onChange={(e) => setSelectedRadius(e.target.value)}
+                        />
+                        <span>{selectedRadius || 30} km</span>
+                    </div>
+                </>
+            )}
+        </div>
     )
 }

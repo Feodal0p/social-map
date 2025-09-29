@@ -38,6 +38,7 @@ export default function EventsMap() {
 
     const [selectedStatus, setSelectedStatus] = useState([null]);
     const [selectedCategories, setSelectedCategories] = useState([null]);
+    const [selectedRadius, setSelectedRadius] = useState(null);
 
     const [participants, setParticipants] = useState([]);
     const [eventComments, setEventComments] = useState([]);
@@ -55,6 +56,7 @@ export default function EventsMap() {
         const params = new URLSearchParams(window.location.search);
         const statusParam = params.get('status');
         const categoryParam = params.get('categories');
+        const radiusParam = params.get('radius');
         if (!statusParam) {
             setSelectedStatus(['upcoming']);
         } else if (statusParam === 'all') {
@@ -65,12 +67,14 @@ export default function EventsMap() {
 
         if (!categoryParam) {
             setSelectedCategories([]);
-        }
-        else if (categoryParam === 'all') {
-            setSelectedCategories([]);
-        }
-        else {
+        } else {
             setSelectedCategories(categoryParam.split(','));
+        }
+
+        if (!radiusParam) {
+            setSelectedRadius('');
+        } else {
+            setSelectedRadius(radiusParam);
         }
     }, []);
 
@@ -86,27 +90,36 @@ export default function EventsMap() {
         }
         if (selectedCategories) {
             if (selectedCategories.length === 0 || selectedCategories.length === 10) {
-                params.set('categories', 'all');
+                params.delete('categories');
             } else {
                 params.set('categories', selectedCategories);
             }
         }
+        if (selectedRadius) {
+            if (Number(selectedRadius) === 30) {
+                params.delete('radius');
+            } else {
+                params.set('radius', selectedRadius);
+            }
+        }
         navigate({ search: params.toString() });
-    }, [selectedStatus, selectedCategories, navigate]);
+    }, [selectedStatus, selectedCategories, selectedRadius, navigate]);
 
     useEffect(() => {
-        if (selectedStatus[0] === null || selectedCategories[0] === null || myLocation === null ) { return; }
+        if (selectedStatus[0] === null || selectedCategories[0] === null || myLocation === null) { return; }
         setLoading(true);
         const statusParam = (selectedStatus.length !== 0 && selectedStatus.length !== 4)
             ? selectedStatus.join(',') : 'all';
         const categoryParam = (selectedCategories.length !== 0 && selectedCategories.length !== 10)
             ? selectedCategories.join(',') : 'all';
+        const radiusParam = (Number(selectedRadius) !== 30) ? selectedRadius : 'all';
         const getEvents = async () => {
             await axios.get('/events', {
                 params: {
                     status: statusParam,
                     categories: categoryParam,
                     coords: myLocation ? myLocation.join(',') : '',
+                    radius: radiusParam,
                 }
             }).then((res) => {
                 setEvents(res.data.data);
@@ -114,7 +127,7 @@ export default function EventsMap() {
         }
         getEvents();
 
-    }, [selectedStatus, selectedCategories, myLocation]);
+    }, [selectedStatus, selectedCategories, myLocation, selectedRadius]);
 
     const createFormData = (oldFormData) => {
         return Object.keys(oldFormData).reduce((newFormData, key) => {
@@ -413,8 +426,8 @@ export default function EventsMap() {
                                                 <button onClick={handleDelete} className='event-delete-button'>Видалити</button>
                                             </div>
                                         )}
-                                        <EventInfo status={selectedEvent.status} categories={selectedEvent.categories} 
-                                        distance={selectedEvent.distance} />
+                                        <EventInfo status={selectedEvent.status} categories={selectedEvent.categories}
+                                            distance={selectedEvent.distance} />
                                         {selectedEvent.preview_image && (
                                             <img src={selectedEvent.preview_image} alt="Event Preview" className='event-preview-image' />
                                         )}
@@ -523,6 +536,9 @@ export default function EventsMap() {
                                     setSelectedStatus={setSelectedStatus}
                                     selectedCategories={selectedCategories}
                                     setSelectedCategories={setSelectedCategories}
+                                    selectedRadius={selectedRadius}
+                                    setSelectedRadius={setSelectedRadius}
+                                    myLocation={myLocation}
                                 />
                             </>
                         )}
