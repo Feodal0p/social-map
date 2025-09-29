@@ -17,6 +17,15 @@ export default function EventFilters({ selectedStatus, setSelectedStatus,
             setCategories(response.data.categories.map(cat => ({ name: cat.name })))
         })
     }, [])
+
+    function handleResetFilters() {
+        setSelectedStatus(['upcoming']),
+        setSelectedCategories([]),
+        setSelectedRadius(30),
+        setDateFrom(null),
+        setDateTo(null)
+    }
+
     return (
         <div className='event-filters'>
             <h1>Filters</h1>
@@ -95,6 +104,7 @@ export default function EventFilters({ selectedStatus, setSelectedStatus,
                 min={dateFrom}
                 onChange={(e) => setDateTo(e.target.value)}
             />
+            <button className='reset-button' onClick={handleResetFilters}>Reset filters</button>
         </div>
     )
 }
