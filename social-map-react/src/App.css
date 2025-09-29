@@ -318,7 +318,7 @@ h1 {
 
 .range-input {
     @apply w-full;
-} 
+}
 
 .event-filters {
     @apply flex flex-col;
@@ -326,6 +326,10 @@ h1 {
 
 .event-filters label {
     @apply font-semibold mt-4;
+}
+
+.event-filters-input {
+    @apply p-2 border outline-0 rounded-sm focus:outline-2 transition-all duration-25;
 }
 
 .radius-filter {

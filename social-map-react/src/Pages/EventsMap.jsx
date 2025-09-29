@@ -39,6 +39,8 @@ export default function EventsMap() {
     const [selectedStatus, setSelectedStatus] = useState([null]);
     const [selectedCategories, setSelectedCategories] = useState([null]);
     const [selectedRadius, setSelectedRadius] = useState(null);
+    const [dateFrom, setDateFrom] = useState(null);
+    const [dateTo, setDateTo] = useState(null);
 
     const [participants, setParticipants] = useState([]);
     const [eventComments, setEventComments] = useState([]);
@@ -57,62 +59,40 @@ export default function EventsMap() {
         const statusParam = params.get('status');
         const categoryParam = params.get('categories');
         const radiusParam = params.get('radius');
-        if (!statusParam) {
-            setSelectedStatus(['upcoming']);
-        } else if (statusParam === 'all') {
-            setSelectedStatus([]);
-        } else {
-            setSelectedStatus(statusParam.split(','));
-        }
-
-        if (!categoryParam) {
-            setSelectedCategories([]);
-        } else {
-            setSelectedCategories(categoryParam.split(','));
-        }
-
-        if (!radiusParam) {
-            setSelectedRadius('');
-        } else {
-            setSelectedRadius(radiusParam);
-        }
+        const dateFromParam = params.get('date_from');
+        const dateToParam = params.get('date_to');
+        setSelectedStatus(!statusParam ? ['upcoming'] : statusParam === 'all' ? [] : statusParam.split(','));
+        setSelectedCategories(!categoryParam ? [] : categoryParam.split(','));
+        setSelectedRadius(radiusParam || 30);
+        setDateFrom(dateFromParam || '');
+        setDateTo(dateToParam || '');
     }, []);
-
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        if (selectedStatus) {
-            if (selectedStatus.length === 0 || selectedStatus.length === 4) {
-                params.set('status', 'all');
-            } else {
-                params.set('status', selectedStatus);
-            }
-        }
-        if (selectedCategories) {
-            if (selectedCategories.length === 0 || selectedCategories.length === 10) {
-                params.delete('categories');
-            } else {
-                params.set('categories', selectedCategories);
-            }
-        }
-        if (selectedRadius) {
-            if (Number(selectedRadius) === 30) {
-                params.delete('radius');
-            } else {
-                params.set('radius', selectedRadius);
-            }
-        }
+        (!selectedStatus ||
+            (selectedStatus.length === 0 || selectedStatus.length === 4))
+            ? params.set('status', 'all') : params.set('status', selectedStatus);
+        (!selectedCategories ||
+            (selectedCategories.length === 0 || selectedCategories.length === 10))
+            ? params.delete('categories') : params.set('categories', selectedCategories);
+        (!selectedRadius || Number(selectedRadius) === 30)
+            ? params.delete('radius') : params.set('radius', selectedRadius);
+        (dateFrom ? params.set('date_from', dateFrom) : params.delete('date_from'));
+        (dateTo ? params.set('date_to', dateTo) : params.delete('date_to'));
         navigate({ search: params.toString() });
-    }, [selectedStatus, selectedCategories, selectedRadius, navigate]);
+    }, [selectedStatus, selectedCategories, selectedRadius, dateFrom, dateTo, navigate]);
 
     useEffect(() => {
-        if (selectedStatus[0] === null || selectedCategories[0] === null || myLocation === null) { return; }
+        if (selectedStatus[0] === null || myLocation === null) { return; }
         setLoading(true);
         const statusParam = (selectedStatus.length !== 0 && selectedStatus.length !== 4)
             ? selectedStatus.join(',') : 'all';
         const categoryParam = (selectedCategories.length !== 0 && selectedCategories.length !== 10)
             ? selectedCategories.join(',') : 'all';
         const radiusParam = (Number(selectedRadius) !== 30) ? selectedRadius : 'all';
+        const dateFromParam = dateFrom ? dateFrom : 'all';
+        const dateToParam = dateTo ? dateTo : 'all';
         const getEvents = async () => {
             await axios.get('/events', {
                 params: {
@@ -120,6 +100,8 @@ export default function EventsMap() {
                     categories: categoryParam,
                     coords: myLocation ? myLocation.join(',') : '',
                     radius: radiusParam,
+                    date_from: dateFromParam,
+                    date_to: dateToParam,
                 }
             }).then((res) => {
                 setEvents(res.data.data);
@@ -127,7 +109,7 @@ export default function EventsMap() {
         }
         getEvents();
 
-    }, [selectedStatus, selectedCategories, myLocation, selectedRadius]);
+    }, [selectedStatus, selectedCategories, myLocation, selectedRadius, dateFrom, dateTo]);
 
     const createFormData = (oldFormData) => {
         return Object.keys(oldFormData).reduce((newFormData, key) => {
@@ -539,6 +521,10 @@ export default function EventsMap() {
                                     selectedRadius={selectedRadius}
                                     setSelectedRadius={setSelectedRadius}
                                     myLocation={myLocation}
+                                    dateFrom={dateFrom}
+                                    setDateFrom={setDateFrom}
+                                    dateTo={dateTo}
+                                    setDateTo={setDateTo}
                                 />
                             </>
                         )}

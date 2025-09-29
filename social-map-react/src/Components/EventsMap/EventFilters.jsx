@@ -3,7 +3,8 @@ import axios from '@plugin/axios'
 import { useEffect, useState } from 'react'
 
 export default function EventFilters({ selectedStatus, setSelectedStatus,
-    selectedCategories, setSelectedCategories, selectedRadius, setSelectedRadius, myLocation }) {
+    selectedCategories, setSelectedCategories, selectedRadius, setSelectedRadius, myLocation,
+    dateFrom, setDateFrom, dateTo, setDateTo }) {
 
     const [statuses, setStatuses] = useState([])
     const [categories, setCategories] = useState([])
@@ -80,6 +81,20 @@ export default function EventFilters({ selectedStatus, setSelectedStatus,
                     </div>
                 </>
             )}
+            <label htmlFor="date-from">Date From</label>
+            <input type="date" id='date-from'
+                className='event-filters-input'
+                value={dateFrom || ''}
+                max={dateTo}
+                onChange={(e) => setDateFrom(e.target.value)}
+            />
+            <label htmlFor="date-to">Date To</label>
+            <input type="date" id='date-to'
+                className='event-filters-input'
+                value={dateTo || ''}
+                min={dateFrom}
+                onChange={(e) => setDateTo(e.target.value)}
+            />
         </div>
     )
 }
