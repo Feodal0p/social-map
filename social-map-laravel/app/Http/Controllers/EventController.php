@@ -43,6 +43,13 @@ class EventController extends Controller
             });
         }
 
+        if (request()->filled('radius') && request('radius') !== 'all' && request()->filled('coords')) {
+            $radius = (int) request('radius');
+            $events = $events->filter(function ($event) use ($radius) {
+                return $event->distance <= $radius;
+            });
+        }
+
         return response()->json([
             'data' => EventSmallResource::collection($events),
         ]);
