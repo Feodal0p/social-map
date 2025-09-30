@@ -51,8 +51,10 @@ class EventController extends Controller
             });
         }
 
-        if (request()->filled('date_from') && request()->filled('date_to')
-            && request('date_from') !== 'all' && request('date_to') !== 'all') {
+        if (
+            request()->filled('date_from') && request()->filled('date_to')
+            && request('date_from') !== 'all' && request('date_to') !== 'all'
+        ) {
             $date_from = request('date_from');
             $date_to = request('date_to');
             $events = $events->filter(function ($event) use ($date_from, $date_to) {
@@ -73,6 +75,20 @@ class EventController extends Controller
 
         return response()->json([
             'data' => EventSmallResource::collection($events),
+        ]);
+    }
+
+    public function myEvents(): JsonResponse
+    {
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+        $events = $user->eventsParticipated()->with(['creator', 'categories'])
+        ->get()->filter(function ($event) {
+            return !in_array($event->status, [Event::STATUS_FINISHED, Event::STATUS_CANCELED]);
+        });
+
+        return response()->json([
+            'data' => EventResource::collection($events),
         ]);
     }
 
