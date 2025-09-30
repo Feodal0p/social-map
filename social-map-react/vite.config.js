@@ -13,6 +13,7 @@ export default defineConfig({
       '@plugin': '/src/Plugin',
       '@context': '/src/Context',
       '@components': '/src/Components',
+      '@constants': '/src/Constants',
     }
   }
 })

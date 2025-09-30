@@ -180,24 +180,41 @@ h1 {
     @apply w-full p-8 pt-0;
 }
 
+.my-events-page {
+    @apply mt-8;
+}
+
 .events-container {
     @apply flex md:flex-wrap gap-4 flex-row w-full overflow-x-auto md:justify-center
 }
 
 .event-card {
-    @apply border w-2xs p-2 flex-shrink-0 
+    @apply bg-gray-100 rounded-2xl w-80 m-8 shadow-md relative
+    transition-transform duration-300 hover:scale-110 hover:cursor-pointer;
 }
 
 .event-card img {
-    @apply w-full h-40 object-cover
+    @apply w-full h-40 object-contain p-4 bg-gray-200 rounded-t-2xl;
 }
 
 .event-card h2 {
-    @apply text-lg font-bold
+    @apply text-lg font-bold mx-4 text-center
 }
 
 .event-card p {
-    @apply text-sm
+    @apply text-sm mx-4
+}
+
+.event-card-categories {
+    @apply flex flex-wrap gap-2 mx-4 my-2 flex-col;
+}
+
+.event-card-status {
+    @apply absolute top-2 left-2 text-white text-xs px-4 py-1 !mx-0 rounded-full font-semibold;
+}
+
+.event-card-category {
+    @apply px-4 py-1 rounded-2xl text-white text-xs font-semibold w-fit;
 }
 
 .create-event-popup {
@@ -450,4 +467,12 @@ h1 {
 
 .my-location {
     @apply absolute bottom-8 right-2 z-500 bg-orange-200/70 hover:bg-orange-300 rounded-2xl py-1 px-4
+}
+
+.no-events {
+    @apply flex md:flex-row flex-col justify-center items-center w-full font-semibold text-lg;
+}
+
+.no-events .nav-link {
+    @apply text-blue-600 hover:text-blue-800 hover:bg-transparent underline px-1 font-semibold text-lg;
 }

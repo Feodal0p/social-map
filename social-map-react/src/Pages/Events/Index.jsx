@@ -1,0 +1,62 @@
+import { useEffect, useState } from "react"
+import axios from "@plugin/axios"
+import Loader from "@components/Loader.jsx"
+import { Link } from "react-router-dom"
+import { statusColors, categoryColors } from '@constants/EventColors';
+
+export default function Index() {
+
+    const [events, setEvents] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        setLoading(true)
+        async function getEvents() {
+            await axios.get('events/my-events').then(res => {
+                setEvents(res.data.data)
+                console.log(res.data.data)
+            }
+            ).finally(() => {
+                setLoading(false)
+            })
+        }
+        getEvents()
+    }, [])
+
+    return (
+        <>
+            {loading ? <Loader /> : (
+                <div className="my-events-page">
+                    <h1>My Events</h1>
+                    {events.length === 0 ? (
+                        <div className="no-events">
+                            <p>Немає подій, у яких ви берете участь, або вони вже завершені.</p>
+                            <Link to="/map" className="nav-link">Приєднуйтесь до нових подій!</Link>
+                        </div>
+                    ) : (
+                        <ul className="events-container">
+                            {events && events.map((event) => (
+                                <li className="event-card" key={event.id}>
+                                    <p className={`event-card-status ${statusColors[event.status]}`}>
+                                        {event.status}
+                                    </p>
+                                    <img src={event.preview_image} alt="event_preview_image" />
+                                    <h2>{event.title}</h2>
+                                    <p>{event.start_time + "-" + event.end_time}</p>
+                                    <div className="event-card-categories">
+                                        {event.categories && event.categories.map(cat => (
+                                            <span key={cat.id} 
+                                            className={`event-card-category ${categoryColors[cat.name]}`}>
+                                                {cat.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
+        </>
+    )
+}

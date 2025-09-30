@@ -17,6 +17,7 @@ export default function Header() {
                 </div>
                 {user ? (
                     <div className="nav-right">
+                        <Link to={`/events`} className="nav-link">My Events</Link>
                         <Link to={`/profile/${user.profile_id}`} className="nav-link">
                             <img
                                 src={user.profile_avatar}

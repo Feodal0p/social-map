@@ -13,6 +13,7 @@ import { AppContext } from '@context/AppContext'
 import Loader from './Components/Loader.jsx'
 import EventsMap from './Pages/EventsMap.jsx'
 import MapLayout from './Layouts/MapLayout.jsx'
+import IndexEvents from './Pages/Events/Index.jsx' 
 
 export default function App() {
 
@@ -30,6 +31,10 @@ export default function App() {
               <UpdateProfile />
             </ProtectedRoute>} />
           <Route index element={<Home />} />
+          <Route path="/events" element={
+            <ProtectedRoute>
+              <IndexEvents />
+            </ProtectedRoute>} />
         </Route>
         <Route element={<MapLayout />}>
         <Route path="/map" element={<EventsMap />} />
