@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react"
 import axios from "@plugin/axios"
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Loader from "@components/Loader";
 import { categoryColors, statusColors } from "@constants/EventColors";
 import EventJoin from "@components/EventsMap/EventJoin";
 import EventCommentsForm from '@components/EventsMap/EventCommentsForm.jsx';
 import EventCommentsList from '@components/EventsMap/EventCommentsList.jsx';
-
-
 
 export default function Show() {
 
@@ -15,6 +13,7 @@ export default function Show() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const [comments, setComments] = useState([]);
 
@@ -41,12 +40,21 @@ export default function Show() {
             {loading ? <Loader /> : (
                 <>
                     {event ? (
-                        <div>
-                            <h1>{event.title}
-                                <span className="event-timestamp">
-                                    created at: {new Date(event.created_at).toLocaleString()}
-                                </span>
-                            </h1>
+                        <>
+                            <div className="event-header">
+                                <div className="event-header-buttons">
+                                    <button className="btn-back btn-special-left" onClick={() => navigate(-1)}>
+                                        Назад
+                                    </button>
+                                    <Link to={`/map?event=${event.id}&status=all`}
+                                        className="btn-to-the-map btn-special-right">На Мапі</Link>
+                                </div>
+                                <h1>{event.title}
+                                    <span className="event-timestamp">
+                                        created at: {new Date(event.created_at).toLocaleString()}
+                                    </span>
+                                </h1>
+                            </div>
                             <div className="event-full">
                                 <img src={event.preview_image} alt={event.title}
                                     className="event-preview" />
@@ -108,7 +116,7 @@ export default function Show() {
                                     <EventCommentsList comments={comments} />
                                 </div>
                             </div>
-                        </div>
+                        </>
                     ) : (
                         <h1>{error[0]}</h1>
                     )}
