@@ -7,6 +7,7 @@ import axios from '@plugin/axios';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
 import { Link, useNavigate } from 'react-router-dom';
+import EventJoin from "@components/EventsMap/EventJoin";
 
 export default function EventsMap() {
 
@@ -299,22 +300,6 @@ export default function EventsMap() {
         }
     }, [filterOpen]);
 
-    async function handleJoinEvent() {
-        if (!selectedEvent.permissions.can_join) {
-            if (!window.confirm('Ви впевнені, що хочете покинути подію?')) return;
-        };
-        await axios.post(`/events/${selectedEvent.id}/join`).then((res) => {
-            setSelectedEvent(prev => ({
-                ...prev,
-                participants_count: res.data.participants_count,
-                permissions: {
-                    ...prev.permissions,
-                    can_join: res.data.can_join
-                }
-            }));
-        });
-    }
-
     async function getParticipants(id) {
         await axios.get(`/events/${id}/participants`).then((res) => {
             setParticipants(res.data);
@@ -436,28 +421,7 @@ export default function EventsMap() {
                                         <div className='event-join'>
                                             <p>Кількість учасників: {selectedEvent.participants_count}</p>
                                             <button className='event-participants-button' onClick={handleParticipantsClick}>Переглянути список учасників</button>
-                                            {selectedEvent.status === 'finished' || selectedEvent.status === 'canceled' ? (
-                                                <>
-                                                    <p>Ця подія вже завершена або скасована</p>
-                                                    {!selectedEvent.permissions.can_join && !selectedEvent.permissions.check_creator && (
-                                                        <p>Ви були учасником цієї події</p>
-                                                    )}
-                                                    {selectedEvent.permissions.check_creator && (
-                                                        <p>Ви були організатором цієї події</p>
-                                                    )}
-                                                </>
-                                            ) : (!user ? (
-                                                <p>Щоб брати участь у події, будь ласка, <Link to="/login">увійдіть</Link> або <Link to="/register">зареєструйтесь</Link>.</p>
-                                            ) : (selectedEvent.permissions.check_creator ? (
-                                                <p>Ви є організатором цієї події, тому уже берете участь</p>
-                                            ) : (selectedEvent.permissions.can_join ? (
-                                                <button className='event-join-button' onClick={handleJoinEvent}>Взяти участь у події</button>
-                                            ) : (
-                                                <>
-                                                    <p>Ви вже є учасником цієї події</p>
-                                                    <button className='event-unjoin-button' onClick={handleJoinEvent}>Вийти з події</button>
-                                                </>
-                                            ))))}
+                                            <EventJoin event={selectedEvent} setSelectedEvent={setSelectedEvent} />
                                         </div>
                                         <div>
                                             {!user || selectedEvent.permissions.can_join ? (
