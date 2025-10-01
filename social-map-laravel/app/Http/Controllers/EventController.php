@@ -184,7 +184,7 @@ class EventController extends Controller
     public function show(Event $event)
     {
         return response()->json([
-            'data' => new EventResource($event->load(['creator', 'categories'])),
+            'data' => new EventResource($event->load(['creator.profile', 'categories'])),
         ]);
     }
 

@@ -14,6 +14,7 @@ import Loader from './Components/Loader.jsx'
 import EventsMap from './Pages/EventsMap.jsx'
 import MapLayout from './Layouts/MapLayout.jsx'
 import IndexEvents from './Pages/Events/Index.jsx' 
+import ShowEvent from './Pages/Events/Show.jsx'
 
 export default function App() {
 
@@ -35,6 +36,7 @@ export default function App() {
             <ProtectedRoute>
               <IndexEvents />
             </ProtectedRoute>} />
+          <Route path="/events/:id" element={<ShowEvent />} />
         </Route>
         <Route element={<MapLayout />}>
         <Route path="/map" element={<EventsMap />} />

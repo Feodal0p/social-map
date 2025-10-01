@@ -8,17 +8,20 @@ export default function Index() {
 
     const [events, setEvents] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         setLoading(true)
         async function getEvents() {
             await axios.get('events/my-events').then(res => {
                 setEvents(res.data.data)
-                console.log(res.data.data)
             }
-            ).finally(() => {
-                setLoading(false)
+            ).catch(err => {
+                setError(["Something went wrong. Please try again later.", err.message])
             })
+                .finally(() => {
+                    setLoading(false)
+                })
         }
         getEvents()
     }, [])
@@ -27,33 +30,39 @@ export default function Index() {
         <>
             {loading ? <Loader /> : (
                 <div className="my-events-page">
-                    <h1>My Events</h1>
-                    {events.length === 0 ? (
-                        <div className="no-events">
-                            <p>Немає подій, у яких ви берете участь, або вони вже завершені.</p>
-                            <Link to="/map" className="nav-link">Приєднуйтесь до нових подій!</Link>
-                        </div>
-                    ) : (
-                        <ul className="events-container">
-                            {events && events.map((event) => (
-                                <li className="event-card" key={event.id}>
-                                    <p className={`event-card-status ${statusColors[event.status]}`}>
-                                        {event.status}
-                                    </p>
-                                    <img src={event.preview_image} alt="event_preview_image" />
-                                    <h2>{event.title}</h2>
-                                    <p>{event.start_time + "-" + event.end_time}</p>
-                                    <div className="event-card-categories">
-                                        {event.categories && event.categories.map(cat => (
-                                            <span key={cat.id} 
-                                            className={`event-card-category ${categoryColors[cat.name]}`}>
-                                                {cat.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    {error ? (<h1>{error[0]}</h1>) : (
+                        <>
+                            <h1>My Events</h1>
+                            {events.length === 0 ? (
+                                <div className="no-events">
+                                    <p>Немає подій, у яких ви берете участь, або вони вже завершені.</p>
+                                    <Link to="/map" className="nav-link">Приєднуйтесь до нових подій!</Link>
+                                </div>
+                            ) : (
+                                <ul className="events-container">
+                                    {events && events.map((event) => (
+                                        <li className="event-card" key={event.id}>
+                                            <Link to={`/events/${event.id}`}>
+                                                <p className={`event-card-status ${statusColors[event.status]}`}>
+                                                    {event.status}
+                                                </p>
+                                                <img src={event.preview_image} alt={event.title} />
+                                                <h2>{event.title}</h2>
+                                                <p>{event.start_time} - {event.end_time}</p>
+                                                <div className="event-card-categories">
+                                                    {event.categories && event.categories.map(cat => (
+                                                        <span key={cat.id}
+                                                            className={`event-card-category ${categoryColors[cat.name]}`}>
+                                                            {cat.name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </>
                     )}
                 </div>
             )}
