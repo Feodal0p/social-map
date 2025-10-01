@@ -15,6 +15,7 @@ import EventsMap from './Pages/EventsMap.jsx'
 import MapLayout from './Layouts/MapLayout.jsx'
 import IndexEvents from './Pages/Events/Index.jsx' 
 import ShowEvent from './Pages/Events/Show.jsx'
+import Participants from './Pages/Events/Paticipants.jsx'
 
 export default function App() {
 
@@ -37,6 +38,7 @@ export default function App() {
               <IndexEvents />
             </ProtectedRoute>} />
           <Route path="/events/:id" element={<ShowEvent />} />
+          <Route path="/events/:id/participants" element={<Participants />} />
         </Route>
         <Route element={<MapLayout />}>
         <Route path="/map" element={<EventsMap />} />

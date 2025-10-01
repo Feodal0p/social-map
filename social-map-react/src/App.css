@@ -588,3 +588,19 @@ h1 {
 .btn-special-right {
     @apply sm:absolute sm:right-1/8 sm:top-1/2 sm:-translate-y-1/2;
 }
+
+.event-participants-page ul {
+    @apply flex w-full justify-center items-center self-center;
+}
+
+.event-participants-page li {
+    @apply md:w-2/3 sm:w-5/6 w-11/12;
+}
+
+.event-participants-page a {
+    @apply w-fit;
+}
+
+.event-participants-page span {
+    @apply ml-auto;
+}
