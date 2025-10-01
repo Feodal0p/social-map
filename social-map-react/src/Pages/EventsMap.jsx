@@ -8,6 +8,8 @@ import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@context/AppContext.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import EventJoin from "@components/EventsMap/EventJoin";
+import EventCommentsForm from '@components/EventsMap/EventCommentsForm.jsx';
+import EventCommentsList from '@components/EventsMap/EventCommentsList.jsx';
 
 export default function EventsMap() {
 
@@ -45,9 +47,6 @@ export default function EventsMap() {
 
     const [participants, setParticipants] = useState([]);
     const [eventComments, setEventComments] = useState([]);
-    const [newComment, setNewComment] = useState({
-        message: '',
-    });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
@@ -316,23 +315,6 @@ export default function EventsMap() {
         getParticipants(selectedEvent.id);
     }
 
-    async function handleCreateComment(e) {
-        e.preventDefault();
-        if (!selectedEvent) return;
-        await axios.post(`/event/${selectedEvent.id}/comments`, newComment).then((res) => {
-            setEventComments([res.data.comment, ...eventComments]);
-            setNewComment({ message: '' });
-        }).catch((err) => {
-            if (err.response?.data?.errors) {
-                setError(err.response.data.errors);
-            } else if (err.response?.data?.message) {
-                setError({ global: err.response.data.message });
-            } else {
-                setError({ global: 'Сталася невідома помилка' });
-            }
-        });
-    }
-
     return (
         <>
             <Map
@@ -424,43 +406,11 @@ export default function EventsMap() {
                                             <EventJoin event={selectedEvent} setSelectedEvent={setSelectedEvent} />
                                         </div>
                                         <div>
-                                            {!user || selectedEvent.permissions.can_join ? (
-                                                <p className='event-sidebar-label'>Щоб залишити коментар, потрібно бути учасником події.</p>
-                                            ) : (
-                                                <>
-                                                    <p className='event-sidebar-label'>Залишити коментар:</p>
-                                                    <form className='event-comment-form' onSubmit={handleCreateComment}>
-                                                        <textarea rows={4} placeholder='Ваш коментар...'
-                                                            value={newComment.message}
-                                                            onChange={(e) => setNewComment({ ...newComment, message: e.target.value })} />
-                                                        {error && error.message && <div className="error">{error.message}</div>}
-                                                        <button type='submit' className='event-comment-submit-button'>Відправити</button>
-                                                    </form>
-                                                </>
-                                            )}
-                                            <p className='event-sidebar-label'>Коментарі користувачів:</p>
-                                            {eventComments.length === 0 ? (
-                                                <p>Поки що немає коментарів. Будьте першим, хто залишить коментар!</p>
-                                            ) : (
-                                                <ul className='event-comments-list' lazy="load">
-                                                    {eventComments.map(comment => (
-                                                        <li className='comment-card' key={comment.id}>
-                                                            <Link to={`/profile/${comment.user.profile_id}`} className='comment-avatar'>
-                                                                <img src={comment.user.profile_avatar} alt={comment.user.name} />
-                                                            </Link>
-                                                            <div className='comment-content'>
-                                                                <div className='comment-header'>
-                                                                    <Link to={`/profile/${comment.user.profile_id}`} className='comment-username'>
-                                                                        <p>{comment.user.name}</p>
-                                                                    </Link>
-                                                                    <span className='comment-timestamp'>{new Date(comment.created_at).toLocaleString()}</span>
-                                                                </div>
-                                                                <p className='comment-message'>{comment.message}</p>
-                                                            </div>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
+                                            <EventCommentsForm can_join={selectedEvent.permissions.can_join}
+                                                event={selectedEvent}
+                                                setEventComments={setEventComments}
+                                                eventComments={eventComments} />
+                                            <EventCommentsList comments={eventComments} />
                                         </div>
                                     </>
                                 )}

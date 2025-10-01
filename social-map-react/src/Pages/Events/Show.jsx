@@ -4,21 +4,30 @@ import { useParams, Link } from "react-router-dom";
 import Loader from "@components/Loader";
 import { categoryColors, statusColors } from "@constants/EventColors";
 import EventJoin from "@components/EventsMap/EventJoin";
+import EventCommentsForm from '@components/EventsMap/EventCommentsForm.jsx';
+import EventCommentsList from '@components/EventsMap/EventCommentsList.jsx';
+
 
 
 export default function Show() {
-
 
     const { id } = useParams();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [comments, setComments] = useState([]);
+
     useEffect(() => {
         setLoading(true);
         async function getEvent() {
             await axios.get(`/events/${id}`).then(res => {
                 setEvent(res.data.data)
+                axios.get(`/event/${id}/comments`).then(res => {
+                    setComments(res.data.comments);
+                }).catch(err => setError(
+                    ['Failed to load comments.', err.message])
+                );
             }
             ).catch(err => setError(
                 ['Event not found or something went wrong.', err.message])
@@ -83,9 +92,20 @@ export default function Show() {
                                             <Link className="event-participants-link">List of Participants</Link>
                                         </div>
                                         <div className="event-participants-join">
-                                        <EventJoin event={event} setSelectedEvent={setEvent} />
+                                            <EventJoin event={event} setSelectedEvent={setEvent} />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div className="event-comments">
+                                <div className="event-add-comments">
+                                    <EventCommentsForm can_join={event.permissions.can_join}
+                                        event={event}
+                                        setEventComments={setComments}
+                                        eventComments={comments} />
+                                </div>
+                                <div className="event-comments-list">
+                                    <EventCommentsList comments={comments} />
                                 </div>
                             </div>
                         </div>
