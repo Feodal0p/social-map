@@ -447,6 +447,7 @@ export default function EventsMap() {
                                 {loading ? (<p>Loading...</p>) : (
                                     <>
                                         <button onClick={() => setSidebarMode('view')} className='event-back-button'>Назад</button>
+                                        <h1>Event Participants</h1>
                                         <EventParticipants
                                             participants={participants}
                                         />

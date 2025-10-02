@@ -15,7 +15,7 @@ import EventsMap from './Pages/EventsMap.jsx'
 import MapLayout from './Layouts/MapLayout.jsx'
 import IndexEvents from './Pages/Events/Index.jsx' 
 import ShowEvent from './Pages/Events/Show.jsx'
-import Participants from './Pages/Events/Paticipants.jsx'
+import Participants from './Pages/Events/Participants.jsx'
 
 export default function App() {
 

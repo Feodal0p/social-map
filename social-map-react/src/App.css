@@ -578,19 +578,15 @@ h1 {
 }
 
 .event-header-buttons {
-    @apply flex justify-between w-11/12 mt-4 sm:m-0;
-}
-
-.btn-special-left {
-    @apply sm:absolute sm:left-1/8 sm:top-1/2 sm:-translate-y-1/2;
-}
-
-.btn-special-right {
-    @apply sm:absolute sm:right-1/8 sm:top-1/2 sm:-translate-y-1/2;
+    @apply flex justify-between sm:w-3/4 w-11/12  mt-4;
 }
 
 .event-participants-page ul {
     @apply flex w-full justify-center items-center self-center;
+}
+
+.header-participants {
+    @apply md:!w-2/3 sm:!w-5/6
 }
 
 .event-participants-page li {

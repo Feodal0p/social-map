@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 export default function EventParticipants({ participants }) {
     return (
         <>
-            <h1>List of participants:</h1>
             <ul className="participants-list">
                 <li className="participant-card">
                     <Link to={`/profile/${participants.creator.profile_id}`}>

@@ -44,11 +44,11 @@ export default function Show() {
                 <>
                     <div className="event-header">
                         <div className="event-header-buttons">
-                            <button className="btn-back btn-special-left" onClick={() => navigate(-1)}>
+                            <button className="btn-back" onClick={() => navigate(-1)}>
                                 Назад
                             </button>
                             <Link to={`/map?event=${event.id}&status=all`}
-                                className="btn-to-the-map btn-special-right">На Мапі</Link>
+                                className="btn-to-the-map">На Мапі</Link>
                         </div>
                         <h1>{event.title}
                             <span className="event-timestamp">

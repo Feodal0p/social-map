@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import axios from "@plugin/axios"
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Loader from "@components/Loader";
 import EventParticipants from "@components/EventsMap/EventParticipants";
 
 export default function Participants() {
 
     const { id } = useParams();
+    const navigate = useNavigate();
     const [participants, setParticipants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,6 +30,14 @@ export default function Participants() {
 
     return (
         <div className="event-participants-page">
+            <div className="event-header">
+                <div className="event-header-buttons header-participants">
+                    <button className="btn-back" onClick={() => navigate(-1)}>
+                        Назад
+                    </button>
+                </div>
+                <h1>Event Participants</h1>
+            </div>
             {participants && <EventParticipants participants={participants} />}
         </div>
     )
