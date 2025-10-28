@@ -29,7 +29,7 @@ nav {
 }
 
 .nav-right .nav-link {
-    @apply flex mx-2;
+    @apply flex mx-2 cursor-pointer;
 }
 
 .nav-right .nav-link span {
@@ -599,4 +599,12 @@ h1 {
 
 .event-participants-page span {
     @apply ml-auto;
+}
+
+.nav-dropdown {
+    @apply relative;
+}
+
+.dropdown {
+    @apply absolute w-56 bg-white border border-gray-300 rounded-md shadow-lg z-50;
 }

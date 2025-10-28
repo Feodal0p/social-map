@@ -28,10 +28,10 @@ export default function EventJoin({ event, setSelectedEvent }) {
             {event.status === 'finished' || event.status === 'canceled' ? (
                 <>
                     <p>Ця подія вже завершена або скасована</p>
-                    {!event.permissions.can_join && !event.permissions.check_creator && (
+                    {!event.permissions.can_join && !event.permissions.check_creator && user && (
                         <p>Ви були учасником цієї події</p>
                     )}
-                    {event.permissions.check_creator && (
+                    {event.permissions.check_creator && user && (
                         <p>Ви були організатором цієї події</p>
                     )}
                 </>

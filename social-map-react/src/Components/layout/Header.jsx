@@ -1,10 +1,11 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import { AppContext } from "../../Context/AppContext"
 
 export default function Header() {
 
     const { user } = useContext(AppContext)
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     return (
         <header className="header">
@@ -17,7 +18,20 @@ export default function Header() {
                 </div>
                 {user ? (
                     <div className="nav-right">
-                        <Link to={`/events`} className="nav-link">My Events</Link>
+                        <div className="nav-dropdown">
+                            <button
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
+                                className="nav-link">Події</button>
+                            {dropdownOpen && (
+                                <div className="dropdown">
+                                    <Link to={`/events/participating`} className="nav-link">Беру участь</Link>
+                                    {user.roles.includes('organizer') && (
+                                        <Link to={`/events/created`} className="nav-link">Створені мною</Link>
+                                    )}
+                                    <Link to={`/events/history`} className="nav-link">Історія подій</Link>
+                                </div>
+                            )}
+                        </div>
                         <Link to={`/profile/${user.profile_id}`} className="nav-link">
                             <img
                                 src={user.profile_avatar}
