@@ -1,11 +1,16 @@
-import { useContext, useState } from "react"
-import { Link } from "react-router-dom"
+import { useContext, useState, useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { AppContext } from "../../Context/AppContext"
 
 export default function Header() {
 
     const { user } = useContext(AppContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        setDropdownOpen(false);
+    }, [location.pathname]);
 
     return (
         <header className="header">
