@@ -22,6 +22,8 @@ Route::controller(ProfileController::class)->group(function () {
 Route::controller(EventController::class)->group(function () {
     Route::get('events', 'index');
     Route::get('events/my-events', 'myEvents')->middleware('auth:sanctum');
+    Route::get('events/my-created-events', 'myCreatedEvents')->middleware('auth:sanctum');
+    Route::get('events/my-history-events', 'myHistoryEvents')->middleware('auth:sanctum');
     Route::get('events/latest', 'latest');
     Route::get('events/statuses', 'statuses');
     Route::post('events/{event}/join', 'join')->middleware('auth:sanctum');

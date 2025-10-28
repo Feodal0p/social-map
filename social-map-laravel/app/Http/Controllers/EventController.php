@@ -92,6 +92,31 @@ class EventController extends Controller
         ]);
     }
 
+    public function myCreatedEvents(): JsonResponse
+    {
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+        $events = $user->events()->with(['creator', 'categories'])->get()->reverse();
+
+        return response()->json([
+            'data' => EventResource::collection($events),
+        ]);
+    }
+
+    public function myHistoryEvents(): JsonResponse
+    {
+        /** @var \App\Models\User */
+        $user = auth('sanctum')->user();
+        $events = $user->eventsParticipated()->with(['creator', 'categories'])
+        ->get()->reverse()->filter(function ($event) {
+            return in_array($event->status, [Event::STATUS_FINISHED, Event::STATUS_CANCELED]);
+        });
+
+        return response()->json([
+            'data' => EventResource::collection($events),
+        ]);
+    }
+
     public function latest(): JsonResponse
     {
         return response()->json([
