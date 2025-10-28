@@ -1,47 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:slnt,wght@-12..0,100..900&display=swap');
 @import "tailwindcss";
 
+@theme {
+    --font-geologica: 'Geologica', sans-serif;
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-large: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    @apply font-geologica bg-zinc-100;
+}
+
 header {
-    @apply w-full bg-orange-100;
+    @apply sticky flex top-0 z-10 items-center justify-between
+    bg-white px-16 py-4 shadow-light;
+}
+
+header .nav-link {
+    @apply font-bold text-3xl text-lime-700 duration-300;
+}
+
+nav {
+    @apply flex items-center gap-8
+}
+
+nav .nav-link {
+    @apply text-lg font-light text-zinc-900 hover:text-lime-700 cursor-pointer 
+}
+
+nav .with-profile {
+    @apply flex items-center gap-2
+}
+
+.nav-dropdown {
+    @apply relative inline-block;
+}
+
+.dropdown {
+    @apply absolute min-w-max top-10 left-1/2 -translate-x-1/2 z-20 bg-white rounded-xl shadow-large 
+    duration-300 px-0 py-3 border border-gray-300;
+}
+
+.dropdown.open {
+    @apply opacity-100 scale-100 translate-y-0 pointer-events-auto;
+}
+
+.dropdown.closed {
+    @apply opacity-0 scale-95 -translate-y-10 pointer-events-none;
+}
+
+.dropdown .nav-link {
+    @apply flex gap-4 items-center px-4 py-3 hover:bg-zinc-100;
+}
+
+.dropdown .nav-link-icon {
+    @apply text-lime-700 w-5 h-5 text-center;
+}
+
+.header-avatar {
+    @apply w-8 h-8 rounded-full object-cover border border-black;
 }
 
 .map-header {
     @apply fixed top-0 left-0 z-500 bg-transparent;
 }
 
-nav {
-    @apply md:flex md:items-center w-full px-8;
-}
-
-.nav-left {
-    @apply flex md:justify-start justify-center gap-4 md:w-1/2 py-4 items-center border-b md:border-0;
-}
-
 .map-header .nav-left {
     @apply border-0 py-2;
-}
-
-.nav-left .nav-link {
-    @apply text-2xl;
-}
-
-.nav-right {
-    @apply flex md:justify-end justify-center md:w-1/2 py-4;
-}
-
-.nav-right .nav-link {
-    @apply flex mx-2 cursor-pointer;
-}
-
-.nav-right .nav-link span {
-    @apply ml-2;
-}
-
-.header-avatar {
-    @apply w-8 h-8 rounded-full object-contain;
-}
-
-.nav-link {
-    @apply text-xl font-semibold hover:bg-orange-300 px-4 py-1 rounded-2xl items-center;
 }
 
 .map-header .nav-link {
@@ -599,12 +625,4 @@ h1 {
 
 .event-participants-page span {
     @apply ml-auto;
-}
-
-.nav-dropdown {
-    @apply relative;
-}
-
-.dropdown {
-    @apply absolute w-56 bg-white border border-gray-300 rounded-md shadow-lg z-50;
 }
