@@ -2,6 +2,11 @@ import axios from "@plugin/axios.js";
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "@context/AppContext";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas);
 
 export default function Register() {
 
@@ -32,42 +37,46 @@ export default function Register() {
 
     return (
         <div className="auth-page">
-            <div className="auth-card">
-                <Link to="/" className="nav-link">
-                    <span>LOGO</span>
-                    <span>Social Map</span>
-                </Link>
-                <div className="auth-header">
-                    <h1>Create account</h1>
-                    <h2>Please enter your details</h2>
-                </div>
+            <section className="auth-card">
+                <Link className="auth-name" to={'/'}>LOGOSocial Map</Link>
+                <h1>Create account!</h1>
                 <form onSubmit={handeRegister} className="auth-form">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" placeholder="Name" id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                    {errors.name && <div className="error">{errors.name[0]}</div>}
-                    <label htmlFor="email">Email</label>
-                    <input type="text" placeholder="example@example.com" id="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                    {errors.email && <div className="error">{errors.email[0]}</div>}
-                    <label htmlFor="password">Password</label>
-                    <input type="password" placeholder="Password" id="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-                    {errors.password && <div className="error">{errors.password[0]}</div>}
-                    <label htmlFor="password_confirmation">Confirm Password</label>
-                    <input type="password" placeholder="Password_confirmation" id="password_confirmation"
-                        value={formData.password_confirmation}
-                        onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })} />
-                    <button type="submit">Register</button>
+                    <div className="form-group">
+                        <label htmlFor="name">Ім'я</label>
+                        <input type="text" placeholder="Ім'я" id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                        {errors.name && <div className="error">{errors.name[0]}</div>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email">Електронна пошта</label>
+                        <input type="text" placeholder="email@example.com" id="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                        {errors.email && <div className="error">{errors.email[0]}</div>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Пароль</label>
+                        <input type="password" placeholder="••••••••" id="password"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                        {errors.password && <div className="error">{errors.password[0]}</div>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password_confirmation">Підтвердження пароля</label>
+                        <input type="password" placeholder="••••••••" id="password_confirmation"
+                            value={formData.password_confirmation}
+                            onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })} />
+                    </div>
+                    <button type="submit">
+                        <FontAwesomeIcon icon="fa-solid fa-user-plus" />
+                        Зареєструватися</button>
                 </form>
-                <div className="auth-footer">
-                    <span>Already have an account?</span>
-                    <Link to="/login" className="nav-link">Login</Link>
-                </div>
-            </div>
+                <p className="register-link">
+                    <span>Вже є обліковий запис?</span>
+                    <Link to="/login" className="nav-link">Увійти</Link>
+                </p>
+            </section>
         </div>
     )
 }

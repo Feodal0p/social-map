@@ -124,7 +124,7 @@ section p {
 }
 
 .event-card {
-    @apply relative p-0 bg-white rounded-xl shadow-light border border-gray-300 flex flex-col hover:-translate-y-2 hover:bg-white;
+    @apply relative p-0 bg-white rounded-xl shadow-light border border-gray-300 flex flex-col hover:-translate-y-2 hover:bg-white duration-300;
 }
 
 .event-card img {
@@ -171,7 +171,7 @@ section p {
 
 .category-badge {
     @apply px-2 py-1 rounded-full text-xs font-semibold
-    flex items-center gap-1 w-fit;
+    flex items-center gap-1 w-fit text-white;
 }
 
 .map-header {
@@ -212,7 +212,7 @@ section p {
 }
 
 .auth-form .form-group {
-    @apply flex flex-col mb-6;
+    @apply flex flex-col mb-4;
 }
 
 .auth-form label {
@@ -239,7 +239,7 @@ section p {
 }
 
 .register-link {
-    @apply flex flex-row justify-center items-center my-4 gap-1 text-base;
+    @apply flex flex-row justify-center items-center mt-4 mb-0 gap-1 text-base;
 }
 
 .register-link a {
