@@ -2,6 +2,11 @@ import axios from "@plugin/axios.js";
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AppContext } from "@context/AppContext";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas);
 
 export default function Login() {
 
@@ -33,33 +38,36 @@ export default function Login() {
 
     return (
         <div className="auth-page">
-            <div className="auth-card">
-                <Link to="/" className="nav-link">
-                    <span>LOGO</span>
-                    <span>Social Map</span>
-                </Link>
-                <div className="auth-header">
-                    <h1>Welcome back</h1>
-                    <h2>Please enter your details</h2>
-                </div>
+            <section className="auth-card">
+                <Link className="auth-name" to={'/'}>LOGOSocial Map</Link>
+                <h1>Welcome back!</h1>
                 <form onSubmit={handeLogin} className="auth-form">
-                    <label htmlFor="email">Email address</label>
-                    <input type="text" placeholder="example@example.com" id="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                    {errors.email && <div className="error">{errors.email[0]}</div>}
-                    <label htmlFor="password">Password</label>
-                    <input type="password" placeholder="Password" id="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-                    {errors.password && <div className="error">{errors.password[0]}</div>}
-                    <button type="submit">Login</button>
+                    <div className="form-group">
+                        <label htmlFor="email">Електронна пошта</label>
+                        <input type="text" placeholder="email@example.com" id="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                        {errors.email && <div className="error">{errors.email[0]}</div>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Пароль</label>
+                        <input type="password" placeholder="••••••••" id="password"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                        {errors.password && <div className="error">{errors.password[0]}</div>}
+                    </div>
+                    <div className="form-group">
+                        <Link to="/forgot-password" className="forgot-password-link">Забули пароль?</Link>
+                    </div>
+                    <button type="submit">
+                        <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" />
+                        Увійти</button>
                 </form>
-                <div className="auth-footer">
-                    <span>Don't have an account?</span>
-                    <Link to="/register" className="nav-link">Register</Link>
-                </div>
-            </div>
+                <p className="register-link">
+                    <span>Немає облікового запису?</span>
+                    <Link to="/register" className="nav-link">Зареєструватися</Link>
+                </p>
+            </section>
         </div>
     )
 }
