@@ -5,6 +5,13 @@ export const statusColors = {
     "canceled": "bg-red-600"
 };
 
+export const statusIcons = {
+    "upcoming": "fa-clock",
+    "active": "fa-check-circle",
+    "finished": "fa-flag-checkered",
+    "canceled": "fa-times-circle"
+};
+
 export const categoryColors = {
     'Волонтерство': 'bg-sky-600',
     'Освіта та навчання': 'bg-indigo-600',
@@ -16,4 +23,17 @@ export const categoryColors = {
     'Соціальні ініціативи': 'bg-purple-600',
     'Бізнес та підприємництво': 'bg-orange-600',
     'Інші': 'bg-fuchsia-600'
+};
+
+export const categoryIcons = {
+    'Волонтерство': 'fa-hands-helping',
+    'Освіта та навчання': 'fa-graduation-cap',
+    'Екологія та довкілля': 'fa-leaf',
+    'Здоров’я та спорт': 'fa-heartbeat',
+    'Культура та мистецтво': 'fa-palette',
+    'Технології та інновації': 'fa-microchip',
+    'Дитячі та сімейні події': 'fa-child',
+    'Соціальні ініціативи': 'fa-users',
+    'Бізнес та підприємництво': 'fa-briefcase',
+    'Інші': 'fa-ellipsis-h'
 };

@@ -12,13 +12,17 @@ body {
     @apply font-geologica bg-zinc-100;
 }
 
+main {
+    @apply px-[7%] py-8;
+}
+
 header {
     @apply sticky flex top-0 z-10 items-center justify-between
     bg-white px-16 py-4 shadow-light;
 }
 
 header .nav-link {
-    @apply font-bold text-3xl text-lime-700 duration-300;
+    @apply font-bold text-3xl text-lime-700 duration-300 hover:text-lime-700/70;
 }
 
 nav {
@@ -62,6 +66,98 @@ nav .with-profile {
     @apply w-8 h-8 rounded-full object-cover border border-black;
 }
 
+section {
+    @apply p-10 mb-8 bg-white rounded-xl shadow-light text-center;
+}
+
+section h1 {
+    @apply text-4xl font-semibold text-zinc-800 mb-4;
+}
+
+section p {
+    @apply text-zinc-600 font-light text-lg mt-4 mb-6;
+}
+
+.hero {
+   @apply bg-gradient-to-br from-zinc-100 to-lime-700/15 py-16 px-10 shadow-none;
+}
+
+.hero h1 {
+    @apply text-5xl font-bold text-lime-700 my-4;
+}
+
+.hero span {
+    @apply text-rose-400;
+}
+
+.section-links {
+    @apply flex justify-center;
+}
+
+section a {
+    @apply bg-lime-700 text-white items-center py-4 px-8 rounded-4xl
+    font-semibold flex gap-2 duration-300 hover:bg-lime-700/70 hover:-translate-y-0.5;
+}
+
+.map img{
+    @apply my-6 mx-auto bg-zinc-500 rounded-xl w-full max-w-3xl h-96 object-cover;
+}
+
+.events-container {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full justify-center;
+}
+
+.event-card {
+    @apply relative p-0 bg-white rounded-xl shadow-light border border-gray-300 flex flex-col hover:-translate-y-2 hover:bg-white;
+}
+
+.event-card img {
+    @apply w-full h-48 rounded-t-xl object-cover border-b border-gray-300 shadow-light;
+}
+
+.event-card-content {
+    @apply px-6 pb-6 grow w-full; 
+}
+
+.event-card-content h2 {
+    @apply text-xl font-normal text-lime-700 mb-3 text-start;
+}
+
+.event-card-content p {
+    @apply text-start text-base my-4 overflow-hidden;
+}
+
+.event-card-footer {
+    @apply text-zinc-600 font-light flex flex-row justify-between w-full px-6 pb-4;
+}
+
+.event-card-footer span {
+    @apply flex items-center gap-1;
+}
+
+.event-card-footer .icon {
+    @apply text-lime-700;
+} 
+
+.status-badge {
+    @apply absolute top-2 left-2 text-white px-2 py-1 rounded-full text-xs font-semibold
+    flex items-center gap-1;
+}
+
+.participants-badge {
+    @apply absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-semibold
+    flex items-center gap-1;
+}
+
+.categories-container {
+    @apply flex flex-wrap gap-2 my-3;
+}
+
+.category-badge {
+    @apply px-2 py-1 rounded-full text-xs font-semibold
+    flex items-center gap-1 w-fit;
+}
+
 .map-header {
     @apply fixed top-0 left-0 z-500 bg-transparent;
 }
@@ -76,10 +172,6 @@ nav .with-profile {
 
 .button-filter {
     @apply px-4 py-1 bg-orange-200/70 hover:bg-orange-300 rounded-2xl items-center;
-}
-
-h1 {
-    @apply text-2xl font-bold my-4 text-center;
 }
 
 .profile-header {
@@ -178,69 +270,8 @@ h1 {
     @apply text-blue-600 text-base hover:text-blue-800 hover:bg-transparent underline;
 }
 
-.home-header {
-    @apply flex md:flex-row flex-col md:justify-between justify-center items-center w-full p-8;
-}
-
-.home-left {
-    @apply md:w-1/2;
-}
-
-.home-left p {
-    @apply text-center;
-}
-
-.home-right {
-    @apply md:w-1/2 relative;
-}
-
-.home-right img {
-    @apply p-8;
-}
-
-.home-right span {
-  @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-lg font-semibold
-}
-
-.home-latest-events {
-    @apply w-full p-8 pt-0;
-}
-
 .my-events-page {
     @apply mt-8;
-}
-
-.events-container {
-    @apply flex flex-wrap gap-4 w-full justify-center
-}
-
-.event-card {
-    @apply bg-gray-100 rounded-2xl w-80 m-8 shadow-md relative
-    transition-transform duration-300 hover:scale-110 hover:cursor-pointer;
-}
-
-.event-card img {
-    @apply w-full h-40 object-cover bg-gray-200 rounded-t-2xl;
-}
-
-.event-card h2 {
-    @apply text-lg font-bold mx-4 text-center
-}
-
-.event-card p {
-    @apply text-sm mx-4
-}
-
-.event-card-categories {
-    @apply flex flex-wrap gap-2 mx-4 my-2 flex-col;
-}
-
-.event-card-status {
-    @apply absolute top-2 left-2 text-white text-xs px-4 py-1 !mx-0 rounded-full font-semibold;
-}
-
-.event-card-category {
-    @apply px-4 py-1 rounded-2xl text-white text-xs font-semibold w-fit;
 }
 
 .create-event-popup {
