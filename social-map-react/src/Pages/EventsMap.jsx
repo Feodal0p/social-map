@@ -312,7 +312,7 @@ export default function EventsMap() {
             setShowSidebar(true);
             setSidebarMode('filters');
             setCreateEventCoords(null);
-        }
+        } else {setShowSidebar(false)}
     }, [filterOpen]);
 
     async function getParticipants(id) {

@@ -28,7 +28,7 @@ export default function Show() {
     if (loading) return <Loader/>;
 
     return (
-        <> 
+        <div className="page"> 
             <ProfileHeader title={`Профіль користувача ${profileData?.user.name}`}
              can_logout={permissions.can_edit}>
                 {user && permissions && permissions.can_edit ? (
@@ -47,6 +47,6 @@ export default function Show() {
 
                 </div>
             </section>
-        </>
+        </div>
     )
 }

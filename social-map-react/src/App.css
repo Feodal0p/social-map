@@ -12,8 +12,8 @@ body {
     @apply font-geologica bg-zinc-100;
 }
 
-main {
-    @apply px-[7%] py-8 min-h-[79.3vh];
+.page {
+    @apply px-[7%] py-8 min-h-[calc(100vh-164px)]
 }
 
 header {
@@ -30,14 +30,14 @@ footer p {
 }
 
 footer a {
-    @apply text-lime-700 hover:text-lime-600;
+    @apply text-lime-700 hover:text-lime-600 duration-300;
 }
 
 footer .copyright {
     @apply flex flex-row justify-center gap-1;
 }
 
-header .nav-link {
+header .home-link {
     @apply font-bold text-3xl text-lime-700 duration-300 hover:text-lime-700/70;
 }
 
@@ -46,7 +46,7 @@ nav {
 }
 
 nav .nav-link {
-    @apply text-lg font-light text-zinc-900 hover:text-lime-700 cursor-pointer 
+    @apply text-lg font-light text-zinc-900 hover:text-lime-700 cursor-pointer duration-300;
 }
 
 nav .with-profile {
@@ -55,6 +55,14 @@ nav .with-profile {
 
 .nav-dropdown {
     @apply relative inline-block;
+}
+
+.nav-dropdown button.open {
+    @apply text-lime-700;
+}
+
+.nav-dropdown button.close {
+    @apply text-zinc-900 hover:text-lime-700;
 }
 
 .dropdown {
@@ -175,19 +183,19 @@ section p {
 }
 
 .map-header {
-    @apply fixed top-0 left-0 z-500 bg-transparent;
-}
-
-.map-header .nav-left {
-    @apply border-0 py-2;
-}
-
-.map-header .nav-link {
-    @apply bg-orange-200/70 hover:bg-orange-300;
+    @apply fixed z-500 w-full bg-white/80 shadow-none ;
 }
 
 .button-filter {
-    @apply px-4 py-1 bg-orange-200/70 hover:bg-orange-300 rounded-2xl items-center;
+    @apply text-lg font-light hover:text-lime-700 cursor-pointer duration-300;
+}
+
+.button-filter.open {
+    @apply text-lime-700 duration-300;
+}
+
+.button-filter.close {
+    @apply text-zinc-900 hover:text-lime-700  duration-300;
 }
 
 .auth-page {
@@ -204,7 +212,7 @@ section p {
 
 .auth-name {
     @apply text-xl font-bold text-zinc-900 flex justify-center
-    hover:text-lime-700/70;
+    hover:text-lime-700/70 duration-300;
 }
 
 .auth-form {

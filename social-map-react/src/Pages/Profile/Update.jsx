@@ -70,7 +70,7 @@ export default function Update() {
     if (loading) return <Loader />;
 
     return (
-        <>
+        <div className="page">
             <ProfileHeader title={`Редагувати профіль ${formData?.user.name}`} />
             <form onSubmit={handleUpdate} className="profile-info" encType="multipart/form-data">
                 <div className="avatar-card">
@@ -91,6 +91,6 @@ export default function Update() {
                 </div>
                 <button type="submit" className="btn-edit">Зберегти зміни</button>
             </form>
-        </>
+        </div>
     )
 }

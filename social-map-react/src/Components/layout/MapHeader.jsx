@@ -1,46 +1,45 @@
 import { useContext } from "react"
 import { Link } from "react-router-dom"
 import { AppContext } from "../../Context/AppContext"
+import DropdownEvents from "./DropdownEvents"
 
 export default function Header() {
 
-    const { user, setFilterOpen} = useContext(AppContext)
-    
+    const { user, setFilterOpen, filterOpen } = useContext(AppContext)
 
     function handleFilterOpen() {
-        setFilterOpen(true);
+        setFilterOpen(!filterOpen);
     }
 
     return (
         <header className="map-header">
-            <nav className="nav">
-                <div className="nav-left">
-                    <Link to="/" className="nav-link">
-                        <span>LOGO</span>
-                        <span>Social Map</span>
-                    </Link>
-                    <button className='button-filter' onClick={handleFilterOpen}>
-                        Фільтри подій
-                    </button>
-                </div>
-                {user ? (
-                    <div className="nav-right">
-                        <Link to={`/profile/${user.profile_id}`} className="nav-link">
-                            <img
-                                src={user.profile_avatar}
-                                alt="Avatar"
-                                className="header-avatar"
-                            />
-                            <span>Profile</span>
-                        </Link>
-                    </div>
-                ) : (
-                    <div className="nav-right">
-                        <Link to="/login" className="nav-link">Login</Link>
-                        <Link to="/register" className="nav-link">Register</Link>
-                    </div>
-                )}
+            <nav>
+                <Link to="/" className="home-link">
+                    <span>LOGO</span>
+                    <span>Social Map</span>
+                </Link>
+                <button className={`button-filter ${filterOpen ? "open" : "close"}`} onClick={handleFilterOpen}>
+                    Фільтри подій
+                </button>
             </nav>
-        </header>
+            {user ? (
+                <nav>
+                    <DropdownEvents user={user} />
+                    <Link to={`/profile/${user.profile_id}`} className="nav-link with-profile">
+                        <img
+                            src={user.profile_avatar}
+                            alt="Avatar"
+                            className="header-avatar"
+                        />
+                        <span>Профіль</span>
+                    </Link>
+                </nav>
+            ) : (
+                <nav className="nav-right">
+                    <Link to="/login" className="nav-link">Login</Link>
+                    <Link to="/register" className="nav-link">Register</Link>
+                </nav>
+            )}
+        </header >
     )
 }

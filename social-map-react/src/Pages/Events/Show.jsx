@@ -39,7 +39,7 @@ export default function Show() {
     if (error) return <h1>{error[0]}</h1>;
 
     return (
-        <>
+        <div className="page">
             {event && (
                 <>
                     <div className="event-header">
@@ -120,6 +120,6 @@ export default function Show() {
                     </div>
                 </>
             )}
-        </>
+        </div>
     )
 }

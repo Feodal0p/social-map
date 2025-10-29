@@ -22,7 +22,7 @@ export default function Home() {
     }, [])
 
     return (
-        <>
+        <div className="page">
             <section className="hero">
                 <h1>Почни змінювати своє <span>місто</span></h1>
                 <p>LOGOSocial Map об’єднує людей для участі у волонтерських ініціативах, соціальних та громадських подіях. Долучайся, організовуй власні заходи, знайомся з однодумцями!</p>
@@ -93,6 +93,6 @@ export default function Home() {
                     ))}
                 </div>
             </section>
-        </>
+        </div>
     )
 }

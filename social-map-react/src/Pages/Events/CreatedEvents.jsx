@@ -27,7 +27,7 @@ export default function Index() {
     }, [])
 
     return (
-        <>
+        <div className="page">
             {loading ? <Loader /> : (
                 <div className="my-events-page">
                     {error ? (<h1>{error[0]}</h1>) : (
@@ -66,6 +66,6 @@ export default function Index() {
                     )}
                 </div>
             )}
-        </>
+        </div>
     )
 }
