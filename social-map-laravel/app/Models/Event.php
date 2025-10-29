@@ -28,6 +28,10 @@ class Event extends Model
         'preview_image',
     ];
 
+    protected $casts = [
+        'location' => 'array',
+    ];
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');

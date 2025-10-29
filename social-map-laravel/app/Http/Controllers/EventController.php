@@ -120,7 +120,7 @@ class EventController extends Controller
     public function latest(): JsonResponse
     {
         return response()->json([
-            'data' => EventResource::collection(Event::with('creator')->latest()->take(4)->get()),
+            'data' => EventResource::collection(Event::with(['creator', 'categories'])->latest()->take(3)->get()),
         ]);
     }
 
@@ -194,12 +194,14 @@ class EventController extends Controller
             $data['preview_image'] = '/images/no-preview.jpeg';
         }
 
+        $data['location'] = $data['location'][0];
         $event = $user->events()->create($data);
         $event->categories()->attach($data['categories']);
         $event->participants()->attach($user->id);
 
         return response()->json([
             'data' => new EventSmallResource($event),
+            'event' => $event,
         ], 201);
     }
 
@@ -230,6 +232,7 @@ class EventController extends Controller
             unset($data['preview_image']);
         }
 
+        $data['location'] = $data['location'][0];
         $event->update($data);
         $event->categories()->sync($data['categories']);
 
