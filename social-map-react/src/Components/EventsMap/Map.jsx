@@ -70,7 +70,7 @@ export default function Map({ events = [], roles = [],
             if (createEventCoords || showSidebar) {
                 handleSidebarClose();
                 setTempMarker(null);
-                setEventAddress('');
+                setEventAddress();
                 clearEventParam();
             } else if (allowedRoles.some(role => roles.includes(role))) {
                 if (!createEventCoords) {
@@ -89,17 +89,19 @@ export default function Map({ events = [], roles = [],
             if (!createEventCoords) return;
             const { lng, lat } = createEventCoords;
             const res = await axios.get(
-                `http://localhost:8080/reverse?lat=${lat}&lon=${lng}&format=json`
+                `http://localhost:8080/reverse?lat=${lat}&lon=${lng}&format=json&`
             );
             const address = res.data.address || {};
-            const locality = address.city || address.town || address.village || '';
-            const shortAddress = [
-                ([address.road, address.house_number].filter(Boolean).join(' ')),
-                locality,
-                address.state,
-                address.country
-            ].filter(Boolean).join(', ');
-            setEventAddress(shortAddress || res.data.display_name);
+            const locality = address.city || address.town || address.village || address.municipality || '';
+            const location = {
+                road: address.road || '',
+                house_number: address.house_number || '',
+                locality: locality,
+                state: address.state || '',
+                country: address.country || '',
+                display_name: res.data.display_name || ''
+            };
+            setEventAddress(location);
         };
         getInfoForCreatedEvent();
     }, [createEventCoords, setEventAddress]);

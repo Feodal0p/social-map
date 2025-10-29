@@ -20,7 +20,7 @@ export default function EventsMap() {
     const [events, setEvents] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
-        location: '',
+        location: [],
         latitude: '',
         longitude: '',
         description: '',
@@ -32,7 +32,7 @@ export default function EventsMap() {
     });
 
     const [createEventCoords, setCreateEventCoords] = useState(null);
-    const [eventAddress, setEventAddress] = useState('');
+    const [eventAddress, setEventAddress] = useState();
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [sidebarMode, setSidebarMode] = useState('create');
@@ -110,7 +110,7 @@ export default function EventsMap() {
         getEvents();
 
     }, [selectedStatus, selectedCategories, myLocation, selectedRadius, dateFrom, dateTo]);
-
+    
     const createFormData = (oldFormData) => {
         return Object.keys(oldFormData).reduce((newFormData, key) => {
             if (key === 'preview_image' && !(oldFormData[key] instanceof File)) {
@@ -121,6 +121,19 @@ export default function EventsMap() {
                     newFormData.append('categories[]', category.id);
                 });
             }
+            if (key === 'location') {
+                const locationArray = Array.isArray(oldFormData[key])
+                    ? oldFormData[key]
+                    : [oldFormData[key]];
+
+                locationArray.forEach((locObj, idx) => {
+                    const loc = typeof locObj === 'string' ? { address: locObj } : locObj;
+                    Object.keys(loc).forEach(locKey => {
+                        newFormData.append(`location[${idx}][${locKey}]`, loc[locKey] || '');
+                    });
+                });
+            }
+
             return newFormData;
         }, new FormData());
     }
@@ -134,7 +147,9 @@ export default function EventsMap() {
             setEventAddress('');
             setShowSidebar(false);
             handleSelectEvent(res.data.data);
+            console.log(res.data);
         }).catch((err) => {
+            console.log(err);
             if (err.response?.data?.errors) {
                 setError(err.response.data.errors);
             } else if (err.response?.data?.message) {
@@ -148,6 +163,7 @@ export default function EventsMap() {
     async function getEvent(id, distance) {
         await axios.get(`/events/${id}`).then((res) => {
             axios.get(`/event/${id}/comments`).then((commentsRes) => {
+                console.log(res.data.data);
                 setSelectedEvent({ ...res.data.data, distance });
                 setEventComments(commentsRes.data.comments);
             }).finally(() => setLoading(false));
@@ -202,7 +218,7 @@ export default function EventsMap() {
         if (sidebarMode === 'edit' && selectedEvent) {
             setFormData({
                 title: selectedEvent.title || '',
-                location: selectedEvent.location || '',
+                location: selectedEvent.location ? selectedEvent.location : [],
                 latitude: selectedEvent.latitude || '',
                 longitude: selectedEvent.longitude || '',
                 description: selectedEvent.description || '',
@@ -215,7 +231,7 @@ export default function EventsMap() {
         } else if (sidebarMode === 'create') {
             setFormData({
                 title: '',
-                location: eventAddress || '',
+                location: eventAddress ? eventAddress : [],
                 latitude: createEventCoords?.lat || '',
                 longitude: createEventCoords?.lng || '',
                 description: '',
@@ -315,6 +331,16 @@ export default function EventsMap() {
         getParticipants(selectedEvent.id);
     }
 
+    function getShortAddress(address) {
+        if (!address) return 'Завантаження...';
+        return [
+            [address.road, address.house_number].filter(Boolean).join(' '),
+            address.locality,
+            address.state,
+            address.country
+        ].filter(Boolean).join(', ');
+    }
+
     return (
         <>
             <Map
@@ -337,7 +363,7 @@ export default function EventsMap() {
                 <div className="create-event-popup">
                     <button
                         onClick={() => { setShowSidebar(true); setError(''); setSidebarMode('create'); }}>Create Event</button>
-                    <p>{eventAddress}</p>
+                    <p>{getShortAddress(eventAddress)}</p>
                 </div>
             )}
             {showSidebar && (
@@ -358,7 +384,8 @@ export default function EventsMap() {
                                     setFormData={setFormData}
                                     error={error}
                                     onSubmit={handleCreate}
-                                    mode={sidebarMode} />
+                                    mode={sidebarMode}
+                                    getShortAddress={getShortAddress} />
                             </>
                         )}
                         {sidebarMode && sidebarMode === 'view' && (
@@ -393,7 +420,7 @@ export default function EventsMap() {
                                             </div>
                                         </div>
                                         <p className='event-sidebar-label'>Локація:</p>
-                                        <p>{selectedEvent.location}</p>
+                                        <p>{getShortAddress(selectedEvent.location)}</p>
                                         {selectedEvent.description && (
                                             <>
                                                 <p className='event-sidebar-label'>Опис події:</p>
@@ -422,7 +449,8 @@ export default function EventsMap() {
                                 <EventForm formData={formData}
                                     setFormData={setFormData}
                                     error={error}
-                                    onSubmit={handleEdit} />
+                                    onSubmit={handleEdit}
+                                    getShortAddress={getShortAddress} />
                             </>
                         )}
                         {sidebarMode && sidebarMode === 'filters' && (

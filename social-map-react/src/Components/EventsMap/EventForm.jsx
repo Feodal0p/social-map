@@ -3,7 +3,7 @@ import axios from "@plugin/axios"
 import Select from 'react-select'
 
 
-export default function EventForm({ formData, setFormData, error, onSubmit, mode }) {
+export default function EventForm({ formData, setFormData, error, onSubmit, mode, getShortAddress }) {
 
     const [categories, setCategories] = useState([])
 
@@ -73,7 +73,7 @@ export default function EventForm({ formData, setFormData, error, onSubmit, mode
                 onChange={(e) => setFormData({ ...formData, end_time: e.target.value })} />
             {error && error.end_time && <div className="error">{error.end_time[0]}</div>}
             <label htmlFor="location">Location</label>
-            <textarea name='location' id="location" value={formData.location} readOnly />
+            <textarea name='location' id="location" value={getShortAddress(formData.location)} readOnly />
             <button type="submit">
                 {mode === 'create' ? 'Create Event' : 'Update Event'}
             </button>
