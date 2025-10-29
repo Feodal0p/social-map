@@ -13,12 +13,28 @@ body {
 }
 
 main {
-    @apply px-[7%] py-8;
+    @apply px-[7%] py-8 min-h-[79.3vh];
 }
 
 header {
     @apply sticky flex top-0 z-10 items-center justify-between
     bg-white px-16 py-4 shadow-light;
+}
+
+footer {
+    @apply bg-zinc-800 text-center text-zinc-400 py-6 mt-auto rounded-t-xl font-light;
+}
+
+footer p {
+    @apply px-2;
+}
+
+footer a {
+    @apply text-lime-700 hover:text-lime-600;
+}
+
+footer .copyright {
+    @apply flex flex-row justify-center gap-1;
 }
 
 header .nav-link {
